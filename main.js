@@ -31,8 +31,6 @@ function placeMark(e){
   if(currentPaintedCell === undefined){
     currentPaintedCell = clickedCell;
     currentPaintedCell.classList.add("selectedCell");
-    // let [posRow, posCol] = [currentPaintedCell.parentElement.rowIndex, currentPaintedCell.cellIndex];
-    // if((posRow + posCol) % 2 === 0) currentPaintedCell.classList.remove("selected");
   }else{
     currentPaintedCell.classList.remove("selectedCell");
     currentPaintedCell = clickedCell;
@@ -98,27 +96,22 @@ function piecePlacer(row, column, node) {
       case 2:
         node.style.backgroundImage = "url('pieces/wBishop.png')";
         node.classList.add("piece");
-
         break;
       case 3:
         node.style.backgroundImage = "url('pieces/wQueen.png')";
         node.classList.add("piece");
-
         break;
       case 4:
         node.style.backgroundImage = "url('pieces/wKing.png')";
         node.classList.add("piece");
-
         break;
       case 5:
         node.style.backgroundImage = "url('pieces/wBishop.png')";
         node.classList.add("piece");
-
         break;
       case 6:
         node.style.backgroundImage = "url('pieces/wKnight.png')";
         node.classList.add("piece");
-
         break;
       case 7:
         node.style.backgroundImage = "url('pieces/wRook.png')";
