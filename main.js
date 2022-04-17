@@ -106,27 +106,20 @@ function piecePlacer(row, column, node){
 
 function buildBoard() {
     const board = document.createElement("table");
-    let boardRow = document.createElement("tr");
-    let boardCell = document.createElement("td");
-    const boardBody = document.createElement("tbody")
-    let tempElement;
-    let cellBoardColor = false; // Black = false White = true
+    const boardBody = document.createElement("tbody");
+    let boardRow;
+    let boardCell;
     board.setAttribute("id", "board"); 
     for(let i = 0; i < BOARD_LENGTH; i++){
+      boardRow = boardBody.insertRow();
         for(let j = 0; j < BOARD_LENGTH; j++){
-            if(cellBoardColor === true){
+          boardCell = boardRow.insertCell();
+            if((i + j) % 2 === 0)
                 boardCell.className = "white";
-            }else{
+            else
                 boardCell.className = "black";
-            }
-            piecePlacer(i, j, boardCell);
-            boardRow.appendChild(boardCell);
-            cellBoardColor = !cellBoardColor;
-            boardCell = document.createElement("td");
+            piecePlacer(i, j, boardCell); 
         }
-        cellBoardColor = !cellBoardColor;
-        boardBody.appendChild(boardRow);
-        boardRow = document.createElement("tr");
     }
     board.appendChild(boardBody);
     return board;
