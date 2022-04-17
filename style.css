@@ -48,3 +48,7 @@ body{
     border-radius: 5px;
     font-family: 'Roboto', sans-serif;
 }
+
+.selectedCell{
+    background-color: #d36b51;
+}
