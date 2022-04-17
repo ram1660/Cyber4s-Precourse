@@ -24,104 +24,59 @@ function setupGui() {
   });
 }
 
-function placeMark(e){
+function placeMark(e) {
   const clickedCell = e.target;
-  if(!clickedCell.classList.contains("piece")) return;
+  if (!clickedCell.classList.contains("piece")) return;
   // We know for sure it's a piece
-  if(currentPaintedCell === undefined){
+  if (currentPaintedCell === undefined) {
     currentPaintedCell = clickedCell;
     currentPaintedCell.classList.add("selectedCell");
-  }else{
+  } else {
     currentPaintedCell.classList.remove("selectedCell");
     currentPaintedCell = clickedCell;
     currentPaintedCell.classList.add("selectedCell");
   }
 }
 
-
 function piecePlacer(row, column, node) {
-  if (row === 0) {
-    switch (column) {
-      case 0:
-        node.style.backgroundImage = "url('pieces/bRook.png')";
-        node.classList.add("piece");
-        break;
-      case 1:
-        node.style.backgroundImage = "url('pieces/bKnight.png')";
-        node.classList.add("piece");
-        break;
-      case 2:
-        node.style.backgroundImage = "url('pieces/bBishop.png')";
-        node.classList.add("piece");
-        break;
-      case 3:
-        node.style.backgroundImage = "url('pieces/bQueen.png')";
-        node.classList.add("piece");
-        break;
-      case 4:
-        node.style.backgroundImage = "url('pieces/bKing.png')";
-        node.classList.add("piece");
-        break;
-      case 5:
-        node.style.backgroundImage = "url('pieces/bBishop.png')";
-        node.classList.add("piece");
-        break;
-      case 6:
-        node.style.backgroundImage = "url('pieces/bKnight.png')";
-        node.classList.add("piece");
-        break;
-      case 7:
-        node.style.backgroundImage = "url('pieces/bRook.png')";
-        node.classList.add("piece");
-        break;
-      default:
-        break;
-    }
-  } else if (row === 1) {
-    node.style.backgroundImage = "url('pieces/bPawn.png')";
-    node.classList.add("piece");
-  } else if (row === 6) {
-    node.style.backgroundImage = "url('pieces/wPawn.png')";
-    node.classList.add("piece");
-  } else if (row === 7) {
-    switch (column) {
-      case 0:
-        node.style.backgroundImage = "url('pieces/wRook.png')";
-        node.classList.add("piece");
-        break;
-      case 1:
-        node.style.backgroundImage = "url('pieces/wKnight.png')";
-        node.classList.add("piece");
-        break;
-      case 2:
-        node.style.backgroundImage = "url('pieces/wBishop.png')";
-        node.classList.add("piece");
-        break;
-      case 3:
-        node.style.backgroundImage = "url('pieces/wQueen.png')";
-        node.classList.add("piece");
-        break;
-      case 4:
-        node.style.backgroundImage = "url('pieces/wKing.png')";
-        node.classList.add("piece");
-        break;
-      case 5:
-        node.style.backgroundImage = "url('pieces/wBishop.png')";
-        node.classList.add("piece");
-        break;
-      case 6:
-        node.style.backgroundImage = "url('pieces/wKnight.png')";
-        node.classList.add("piece");
-        break;
-      case 7:
-        node.style.backgroundImage = "url('pieces/wRook.png')";
-        node.classList.add("piece");
-        break;
-      default:
-        break;
-    }
+  if (row !== 0 && row !== 1 && row !== 7 && row !== 6) return;
+  node.classList.add("piece"); // Add the piece class because we know it's a place where a piece will sit on.
+  
+  let color;
+  if (row === 0 || row === 1) color = "b";
+  else if (row === 7 || row === 6) color = "w";
+
+  switch (column) {
+    case 0:
+      node.style.backgroundImage = `url('pieces/${color}Rook.png')`;
+      break;
+    case 1:
+      node.style.backgroundImage = `url('pieces/${color}Knight.png')`;
+      break;
+    case 2:
+      node.style.backgroundImage = `url('pieces/${color}Bishop.png')`;
+      break;
+    case 3:
+      node.style.backgroundImage = `url('pieces/${color}Queen.png')`;
+      break;
+    case 4:
+      node.style.backgroundImage = `url('pieces/${color}King.png')`;
+      break;
+    case 5:
+      node.style.backgroundImage = `url('pieces/${color}Bishop.png')`;
+      break;
+    case 6:
+      node.style.backgroundImage = `url('pieces/${color}Knight.png')`;
+      break;
+    case 7:
+      node.style.backgroundImage = `url('pieces/${color}Rook.png')`;
+      break;
+    default:
+      break;
   }
-  if(node.classList.contains("piece")) node.style.cursor = "pointer";
+  if (row === 1 || row === 6)
+    node.style.backgroundImage = `url('pieces/${color}Pawn.png')`;
+  if (node.classList.contains("piece")) node.style.cursor = "pointer";
   node.style.backgroundRepeat = "no-repeat";
   node.style.backgroundPosition = "center";
 }
