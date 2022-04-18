@@ -52,3 +52,7 @@ body{
 .selectedCell{
     background-color: #d36b51;
 }
+
+.possibleMove{
+    background-color: #458a84;
+}
