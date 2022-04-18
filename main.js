@@ -1,6 +1,16 @@
 const BOARD_LENGTH = 8;
+const board = [];
 let currentPaintedCell;
 window.addEventListener("load", setupGui);
+
+
+function updateBoard(){
+  for(let i = 0; i < BOARD_LENGTH; i++){
+    for(let j = 0; j < BOARD_LENGTH; j++){
+
+    }
+  }
+}
 
 function setupGui() {
   let elementVar;
@@ -29,13 +39,12 @@ function placeMark(e) {
   if (!clickedCell.classList.contains("piece")) return;
   // We know for sure it's a piece
   if (currentPaintedCell === undefined) {
-    currentPaintedCell = clickedCell;
     currentPaintedCell.classList.add("selectedCell");
   } else {
     currentPaintedCell.classList.remove("selectedCell");
-    currentPaintedCell = clickedCell;
-    currentPaintedCell.classList.add("selectedCell");
+    clickedCell.classList.add("selectedCell");
   }
+  currentPaintedCell = clickedCell;
 }
 
 function piecePlacer(row, column, node) {
@@ -48,6 +57,7 @@ function piecePlacer(row, column, node) {
 
   switch (column) {
     case 0:
+      board.push(new Rook())
       node.style.backgroundImage = `url('pieces/${color}Rook.png')`;
       break;
     case 1:
@@ -79,6 +89,10 @@ function piecePlacer(row, column, node) {
   if (node.classList.contains("piece")) node.style.cursor = "pointer";
   node.style.backgroundRepeat = "no-repeat";
   node.style.backgroundPosition = "center";
+}
+
+function name(params) {
+  
 }
 
 function buildBoard() {
