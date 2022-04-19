@@ -36,19 +36,19 @@ class Pawn extends Piece {
         // TODO: Add bounderies check
         if (this.isFirstMove) { // Is it the first move?
             if (this.color === "w") {
-                this.addNearMovableCell(board);
+                this.addNearMovableCell(board, possibleMoves);
                 if (board[this.row - 2][this.column].getName() !== "Empty") return possibleMoves;
                 possibleMoves.push([this.row - 2, this.column]);
             } else {
-                this.addNearMovableCell(board);
+                this.addNearMovableCell(board, possibleMoves);
                 if (board[this.row + 2][this.column].getName() !== "Empty") return possibleMoves;
                 possibleMoves.push([this.row + 2, this.column]);
             }
         } else { // Is it the second move?
             if (this.color === "w")
-                this.addNearMovableCell(board);
+                this.addNearMovableCell(board, possibleMoves);
             else
-                this.addNearMovableCell(board);
+                this.addNearMovableCell(board, possibleMoves);
         }
         if (this.color === "w") {
             if (this.row - 1) { // White eat
@@ -67,7 +67,7 @@ class Pawn extends Piece {
         }
         return [possibleMoves, possibleEats];
     }
-    addNearMovableCell(board) {
+    addNearMovableCell(board, possibleMoves) {
         if (this.color === "w") {
             if (board[this.row - 1][this.column].getName() !== "Empty") return possibleMoves;
             possibleMoves.push([this.row - 1, this.column]);
@@ -277,7 +277,7 @@ class Bishop extends Piece {
         const possibleEats = [];
         const possibleMoves = [];
         for (let i = this.row - 1; i > -1; i--) { // Top left
-            for (let j = this.column - 1; i > -1; i--) {
+            for (let j = this.column - 1; j > -1; j--) {
                 if (board[i][j].getColor() !== this.enemyColor)
                     break;
                 if (board[i][j].getColor() === this.enemyColor) {
@@ -288,7 +288,7 @@ class Bishop extends Piece {
             }
         }
         for (let i = this.row - 1; i > -1; i--) { // Top right
-            for (let j = this.column + 1; i < BOARD_LENGTH; i--) {
+            for (let j = this.column + 1; j < BOARD_LENGTH; j++) {
                 if (board[i][j].getColor() !== this.enemyColor)
                     break;
                 if (board[i][this.column].getColor() === this.enemyColor) {
@@ -298,6 +298,29 @@ class Bishop extends Piece {
                     possibleMoves.push([i, j]);
             }
         }
+        for (let i = this.row + 1; i < BOARD_LENGTH; i++) { // Bottom right
+            for (let j = this.column + 1; j < BOARD_LENGTH; j++) {
+                if (board[i][j].getColor() !== this.enemyColor)
+                    break;
+                if (board[i][this.column].getColor() === this.enemyColor) {
+                    possibleEats.push([i, j]);
+                    break;
+                } else if (board[i][j].getName() === "Empty")
+                    possibleMoves.push([i, j]);
+            }
+        }
+        for (let i = this.row + 1; i < BOARD_LENGTH; i++) { // Bottom left
+            for (let j = this.column - 1; j > -1; j--) {
+                if (board[i][j].getColor() !== this.enemyColor)
+                    break;
+                if (board[i][j].getColor() === this.enemyColor) {
+                    possibleEats.push([i, j]);
+                    break;
+                } else if (board[i][j].getName() === "Empty")
+                    possibleMoves.push([i, j]);
+            }
+        }
+        return [possibleMoves, possibleEats];
     }
 }
 
