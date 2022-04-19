@@ -1,3 +1,6 @@
+/**
+ * A generic class represents 
+ */
 class Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         this.name = name;
@@ -249,7 +252,9 @@ class Bishop extends Piece {
 
     }
 }
-
+/**
+ * This class makes easier to represent an empty class.
+ */
 class Empty {
     constructor(row, column) {
         this.row = row;
