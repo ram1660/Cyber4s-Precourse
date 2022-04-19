@@ -434,4 +434,7 @@ class Empty {
     getColor() {
         return "None";
     }
+    getImage(){
+        return "none";
+    }
 }

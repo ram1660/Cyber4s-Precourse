@@ -56,3 +56,7 @@ body{
 .possibleMove{
     background-color: #458a84;
 }
+
+.possibleEat{
+    background-color: #bd0808;
+}
