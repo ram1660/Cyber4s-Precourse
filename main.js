@@ -86,13 +86,13 @@ function piecePlacer(row, column, node) {
     if (column === 0 || column === 7)
       objBoard[row].push(new Rook(row, column, "Rook", `url('pieces/${color}Rook.png')`, color));
     else if (column === 1 || column === 6)
-      objBoard[row].push(new Knight(row, column, "Knight",`url('pieces/${color}Knight.png')`, color));
+      objBoard[row].push(new Knight(row, column, "Knight", `url('pieces/${color}Knight.png')`, color));
     else if (column === 2 || column === 5)
       objBoard[row].push(new Bishop(row, column, "Bishop", `url('pieces/${color}Bishop.png')`, color));
     else if (column === 3)
-      objBoard[row].push(new Queen(row, column, "Queen",`url('pieces/${color}Queen.png')`, color));
+      objBoard[row].push(new Queen(row, column, "Queen", `url('pieces/${color}Queen.png')`, color));
     else if (column === 4)
-      objBoard[row].push(new King(row, column, "King",`url('pieces/${color}King.png')`, color));
+      objBoard[row].push(new King(row, column, "King", `url('pieces/${color}King.png')`, color));
   }
   else if (row === 1 || row === 6) {
     objBoard[row].push(new Pawn(row, column, "Pawn", `url('pieces/${color}Pawn.png')`, color));
@@ -117,6 +117,9 @@ function buildBoard() {
       piecePlacer(i, j, boardCell);
     }
   }
+  objBoard[3][3] = new Queen(3, 3, "Queen", `url('pieces/wQueen.png')`, 'w');
+  console.log(objBoard[3][3].showPossibleMoves(objBoard));
+
   board.appendChild(boardBody);
   board.addEventListener("click", (e) => {
     cellInteraction(e);

@@ -57,7 +57,7 @@ class Pawn extends Piece {
                 if (this.column + 1 < BOARD_LENGTH && board[this.row - 1][this.column + 1] === this.enemyColor)
                     possibleEats.push([this.row - 1, this.column + 1]);
             }
-        }else{
+        } else {
             if (this.row + 1) { // Black eat
                 if (this.column - 1 > -1 && board[this.row - 1][this.column - 1] === this.enemyColor)
                     possibleEats.push([this.row - 1, this.column - 1]);
@@ -89,7 +89,7 @@ class Rook extends Piece {
         const possibleMoves = [];
         const possibleEats = [];
         for (let i = this.row + 1; i < BOARD_LENGTH; i++) {
-            if (board[i][this.column].getColor() !== this.enemyColor)
+            if (board[i][this.column].getColor() !== this.enemyColor && board[i][this.column].getColor() !== "None")
                 break;
             if (board[i][this.column].getColor() === this.enemyColor) {
                 possibleEats.push([i, this.column]);
@@ -98,7 +98,7 @@ class Rook extends Piece {
                 possibleMoves.push([i, this.column]);
         }
         for (let i = this.row - 1; i > -1; i--) {
-            if (board[i][this.column].getColor() !== this.enemyColor)
+            if (board[i][this.column].getColor() !== this.enemyColor && board[i][this.column].getColor() !== "None")
                 break;
             if (board[i][this.column].getColor() === this.enemyColor) {
                 possibleEats.push([i, this.column]);
@@ -107,7 +107,7 @@ class Rook extends Piece {
                 possibleMoves.push([i, this.column]);
         }
         for (let i = this.column + 1; i < BOARD_LENGTH; i++) {
-            if (board[this.row][i].getColor() !== this.enemyColor)
+            if (board[this.row][i].getColor() !== this.enemyColor && board[this.row][i].getColor() !== "None")
                 break;
             if (board[this.row][i].getColor() === this.enemyColor) {
                 possibleEats.push([this.row, i]);
@@ -116,7 +116,7 @@ class Rook extends Piece {
                 possibleMoves.push([this.row, i]);
         }
         for (let i = this.column - 1; i > -1; i--) {
-            if (board[this.row][i].getColor() !== this.enemyColor)
+            if (board[this.row][i].getColor() !== this.enemyColor && board[this.row][i].getColor() !== "None")
                 break;
             if (board[this.row][i].getColor() === this.enemyColor) {
                 possibleEats.push([this.row, i]);
@@ -132,13 +132,104 @@ class Queen extends Piece {
         super(row, column, name, pieceImage, color, additionalStyles);
     }
     showPossibleMoves(board) {
-
+        const possibleMoves = [];
+        const possibleEats = [];
+        this.possibleDiagonalsMoves(board, possibleMoves, possibleEats);
+        this.possibleStraightMoves(board, possibleMoves, possibleEats);
+        return [possibleMoves, possibleEats];
     }
-    possibleDiagonalsMoves(board) {
-
+    // Inspired from the bishop logic
+    possibleDiagonalsMoves(board, possibleMoves, possibleEats) {
+        let i = this.row - 1, j = this.column - 1;
+        while (i > -1 && j > -1) { // Top left
+            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
+                break;
+            if (board[i][j].getColor() === this.enemyColor) {
+                possibleEats.push([i, j]);
+                break;
+            } else if (board[i][j].getName() === "Empty")
+                possibleMoves.push([i, j]);
+            i--;
+            j--;
+        }
+        i = this.row - 1;
+        j = this.column + 1;
+        while (i > -1 && j < BOARD_LENGTH) { // Top right
+            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
+                break;
+            if (board[i][this.column].getColor() === this.enemyColor) {
+                possibleEats.push([i, j]);
+                break;
+            } else if (board[i][j].getName() === "Empty")
+                possibleMoves.push([i, j]);
+            i--;
+            j++;
+        }
+        i = this.row + 1;
+        j = this.column + 1;
+        while (i < BOARD_LENGTH && j < BOARD_LENGTH) { // Bottom right
+            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
+                break;
+            if (board[i][this.column].getColor() === this.enemyColor) {
+                possibleEats.push([i, j]);
+                break;
+            } else if (board[i][j].getName() === "Empty")
+                possibleMoves.push([i, j]);
+            i++;
+            j++;
+        }
+        i = this.row + 1;
+        j = this.column - 1;
+        while (i < BOARD_LENGTH && j > -1) { // Bottom left
+            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
+                break;
+            if (board[i][j].getColor() === this.enemyColor) {
+                possibleEats.push([i, j]);
+                break;
+            } else if (board[i][j].getName() === "Empty")
+                possibleMoves.push([i, j]);
+            i++;
+            j--;
+        }
     }
-    possibleStraightMoves(board) {
-
+    // Inspired from the rook logic
+    possibleStraightMoves(board, possibleMoves, possibleEats) {
+        for (let i = this.row + 1; i < BOARD_LENGTH; i++) {
+            if (board[i][this.column].getColor() !== this.enemyColor && board[i][this.column].getColor() !== "None")
+                break;
+            if (board[i][this.column].getColor() === this.enemyColor) {
+                possibleEats.push([i, this.column]);
+                break;
+            } else if (board[i][this.column].getName() === "Empty")
+                possibleMoves.push([i, this.column]);
+        }
+        for (let i = this.row - 1; i > -1; i--) {
+            if (board[i][this.column].getColor() !== this.enemyColor && board[i][this.column].getColor() !== "None")
+                break;
+            if (board[i][this.column].getColor() === this.enemyColor) {
+                possibleEats.push([i, this.column]);
+                break;
+            } else if (board[i][this.column].getName() === "Empty")
+                possibleMoves.push([i, this.column]);
+        }
+        for (let i = this.column + 1; i < BOARD_LENGTH; i++) {
+            if (board[this.row][i].getColor() !== this.enemyColor && board[this.row][i].getColor() !== "None")
+                break;
+            if (board[this.row][i].getColor() === this.enemyColor) {
+                possibleEats.push([this.row, i]);
+                break;
+            } else if (board[this.row][i].getName() === "Empty")
+                possibleMoves.push([this.row, i]);
+        }
+        for (let i = this.column - 1; i > -1; i--) {
+            if (board[this.row][i].getColor() !== this.enemyColor && board[this.row][i].getColor() !== "None")
+                break;
+            if (board[this.row][i].getColor() === this.enemyColor) {
+                possibleEats.push([this.row, i]);
+                break;
+            } else if (board[this.row][i].getName() === "Empty")
+                possibleMoves.push([this.row, i]);
+        }
     }
 }
 
@@ -276,49 +367,56 @@ class Bishop extends Piece {
     showPossibleMoves(board) {
         const possibleEats = [];
         const possibleMoves = [];
-        for (let i = this.row - 1; i > -1; i--) { // Top left
-            for (let j = this.column - 1; j > -1; j--) {
-                if (board[i][j].getColor() !== this.enemyColor)
-                    break;
-                if (board[i][j].getColor() === this.enemyColor) {
-                    possibleEats.push([i, j]);
-                    break;
-                } else if (board[i][j].getName() === "Empty")
-                    possibleMoves.push([i, j]);
-            }
+        let i = this.row - 1, j = this.column - 1;
+        while (i > -1 && j > -1) { // Top left
+            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
+                break;
+            if (board[i][j].getColor() === this.enemyColor) {
+                possibleEats.push([i, j]);
+                break;
+            } else if (board[i][j].getName() === "Empty")
+                possibleMoves.push([i, j]);
+            i--;
+            j--;
         }
-        for (let i = this.row - 1; i > -1; i--) { // Top right
-            for (let j = this.column + 1; j < BOARD_LENGTH; j++) {
-                if (board[i][j].getColor() !== this.enemyColor)
-                    break;
-                if (board[i][this.column].getColor() === this.enemyColor) {
-                    possibleEats.push([i, j]);
-                    break;
-                } else if (board[i][j].getName() === "Empty")
-                    possibleMoves.push([i, j]);
-            }
+        i = this.row - 1;
+        j = this.column + 1;
+        while (i > -1 && j < BOARD_LENGTH) { // Top right
+            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
+                break;
+            if (board[i][this.column].getColor() === this.enemyColor) {
+                possibleEats.push([i, j]);
+                break;
+            } else if (board[i][j].getName() === "Empty")
+                possibleMoves.push([i, j]);
+            i--;
+            j++;
         }
-        for (let i = this.row + 1; i < BOARD_LENGTH; i++) { // Bottom right
-            for (let j = this.column + 1; j < BOARD_LENGTH; j++) {
-                if (board[i][j].getColor() !== this.enemyColor)
-                    break;
-                if (board[i][this.column].getColor() === this.enemyColor) {
-                    possibleEats.push([i, j]);
-                    break;
-                } else if (board[i][j].getName() === "Empty")
-                    possibleMoves.push([i, j]);
-            }
+        i = this.row + 1;
+        j = this.column + 1;
+        while (i < BOARD_LENGTH && j < BOARD_LENGTH) { // Bottom right
+            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
+                break;
+            if (board[i][this.column].getColor() === this.enemyColor) {
+                possibleEats.push([i, j]);
+                break;
+            } else if (board[i][j].getName() === "Empty")
+                possibleMoves.push([i, j]);
+            i++;
+            j++;
         }
-        for (let i = this.row + 1; i < BOARD_LENGTH; i++) { // Bottom left
-            for (let j = this.column - 1; j > -1; j--) {
-                if (board[i][j].getColor() !== this.enemyColor)
-                    break;
-                if (board[i][j].getColor() === this.enemyColor) {
-                    possibleEats.push([i, j]);
-                    break;
-                } else if (board[i][j].getName() === "Empty")
-                    possibleMoves.push([i, j]);
-            }
+        i = this.row + 1;
+        j = this.column - 1;
+        while (i < BOARD_LENGTH && j > -1) { // Bottom left
+            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
+                break;
+            if (board[i][j].getColor() === this.enemyColor) {
+                possibleEats.push([i, j]);
+                break;
+            } else if (board[i][j].getName() === "Empty")
+                possibleMoves.push([i, j]);
+            i++;
+            j--;
         }
         return [possibleMoves, possibleEats];
     }
