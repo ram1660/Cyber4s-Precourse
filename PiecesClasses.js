@@ -1,3 +1,5 @@
+// TODO: The possible move functions have repeated code. Find a way to format the code in a way without any duplicates.
+
 class Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         this.name = name;
@@ -30,7 +32,9 @@ class Pawn extends Piece {
         this.isFirstMove = true;
     }
     showPossibleMoves(board) {
-        let possibleMoves = [];
+        const possibleMoves = [];
+        const possibleEats = [];
+
         if (this.isFirstMove) {
             if (this.color === "w") {
                 if (board[this.row - 1][this.column].getName() !== "Empty") return possibleMoves;
@@ -44,7 +48,7 @@ class Pawn extends Piece {
                 possibleMoves.push([this.row + 2, this.column]);
             }
         }
-        return possibleMoves;
+        return [possibleMoves, possibleEats];
     }
     movePiece(board) {
         this.isFirstMove = false;
@@ -56,11 +60,12 @@ class Rook extends Piece {
         super(row, column, name, pieceImage, color, additionalStyles);
     }
     showPossibleMoves(board) {
-        let possibleMoves = [];
-        let possibleEats = [];
+        const possibleMoves = [];
+        const possibleEats = [];
+        const enemyColor = this.color === "w" ? "b" : "w";
         // Possible duplicated code
         if (this.color === "w") {
-            for (let i = this.row; i < board.length; i++) {
+            for (let i = this.row; i < BOARD_LENGTH; i++) {
                 if (board[i][this.column].getColor() === "w")
                     break;
                 if (board[i][this.column].getColor() === "b") {
@@ -78,7 +83,7 @@ class Rook extends Piece {
                 } else
                     possibleMoves.push([i, this.column]);
             }
-            for (let i = this.column; i < board.length; i++) {
+            for (let i = this.column; i < BOARD_LENGTH; i++) {
                 if (board[this.row][i].getColor() === "w")
                     break;
                 if (board[this.row][i].getColor() === "b") {
@@ -96,8 +101,8 @@ class Rook extends Piece {
                 } else
                     possibleMoves.push([this.row, i]);
             }
-        }else{
-            for (let i = this.row; i < board.length; i++) {
+        } else {
+            for (let i = this.row; i < BOARD_LENGTH; i++) {
                 if (board[i][this.column].getColor() === "b")
                     break;
                 if (board[i][this.column].getColor() === "w") {
@@ -115,7 +120,7 @@ class Rook extends Piece {
                 } else
                     possibleMoves.push([i, this.column]);
             }
-            for (let i = this.column; i < board.length; i++) {
+            for (let i = this.column; i < BOARD_LENGTH; i++) {
                 if (board[this.row][i].getColor() === "b")
                     break;
                 if (board[this.row][i].getColor() === "w") {
@@ -144,10 +149,10 @@ class Queen extends Piece {
     showPossibleMoves(board) {
 
     }
-    possibleDiagonalsMoves(board){
+    possibleDiagonalsMoves(board) {
 
     }
-    possibleStraightMoves(board){
+    possibleStraightMoves(board) {
 
     }
 }
@@ -157,15 +162,124 @@ class Knight extends Piece {
         super(row, column, name, pieceImage, color, additionalStyles);
     }
     showPossibleMoves(board) {
-        let possibleMoves = [];
-        let possibleEats = [];
-        try {
-            if(board[this.row + 2][this.column + 1].getName() === "b")
-                possibleMoves.push([this.row + 2, this.column + 1]);
-            // if()
-        } catch (outOfBounderies) {
-            
+        const possibleMoves = [];
+        const possibleEats = [];
+        if (this.color === "w") {
+            if (this.row + 2 < BOARD_LENGTH) {
+                if (this.column + 1 < BOARD_LENGTH) {
+                    if (board[this.row + 2][this.column + 1].getColor() === "b")
+                        possibleEats.push([this.row + 2, this.column + 1]);
+                    else if (board[this.row + 2][this.column + 1].getName() === "Empty")
+                        possibleMoves.push([this.row + 2, this.column + 1]);
+                }
+                if (this.column - 1 > -1) {
+                    if (board[this.row + 2][this.column - 1].getColor() === "b")
+                        possibleEats.push([this.row + 2, this.column - 1]);
+                    else if (board[this.row + 2][this.column - 1].getName() === "Empty")
+                        possibleMoves.push([this.row + 2, this.column - 1]);
+                }
+            }
+            if (this.row - 2 > -1) {
+                if (this.column + 1 < BOARD_LENGTH) {
+                    if (board[this.row - 2][this.column + 1].getColor() === "b")
+                        possibleEats.push([this.row - 2, this.column + 1]);
+                    else if (board[this.row - 2][this.column + 1].getName() === "Empty")
+                        possibleMoves.push([this.row - 2, this.column + 1]);
+                }
+                if (this.column - 1 > -1) {
+                    if (board[this.row - 2][this.column - 1].getColor() === "b")
+                        possibleEats.push([this.row - 2, this.column - 1]);
+                    else if (board[this.row - 2][this.column - 1].getName() === "Empty")
+                        possibleMoves.push([this.row - 2, this.column - 1]);
+                }
+            }
+            if (this.column + 2 < BOARD_LENGTH) {
+                if (this.row + 1 < BOARD_LENGTH) {
+                    if (board[this.row + 1][this.column + 2].getColor() === "b")
+                        possibleEats.push([this.row + 1, this.column + 2]);
+                    else if (board[this.row + 1][this.column + 2].getName() === "Empty")
+                        possibleMoves.push([this.row + 1, this.column + 2]);
+                }
+                if (this.row - 1 > -1) {
+                    if (board[this.row - 1][this.column + 2].getColor() === "b")
+                        possibleEats.push([this.row - 1, this.column + 2]);
+                    else if (board[this.row - 1][this.column + 2].getName() === "Empty")
+                        possibleMoves.push([this.row - 1, this.column + 2]);
+                }
+            }
+            if (this.column - 2 > -1) {
+                if (this.row + 1 < BOARD_LENGTH) {
+                    if (board[this.row + 1][this.column - 2].getColor() === "b")
+                        possibleEats.push([this.row + 1, this.column - 2]);
+                    else if (board[this.row + 1][this.column - 2].getName() === "Empty")
+                        possibleMoves.push([this.row + 1, this.column - 2]);
+                }
+                if (this.row - 1 > -1) {
+                    if (board[this.row - 1][this.column - 2].getColor() === "b")
+                        possibleEats.push([this.row - 1, this.column - 2]);
+                    else if (board[this.row - 1][this.column - 2].getName() === "Empty")
+                        possibleMoves.push([this.row - 1, this.column - 2]);
+                }
+            }
+        } else {
+            if (this.row + 2 < BOARD_LENGTH) {
+                if (this.column + 1 < BOARD_LENGTH) {
+                    if (board[this.row + 2][this.column + 1].getColor() === "w")
+                        possibleEats.push([this.row + 2, this.column + 1]);
+                    else if (board[this.row + 2][this.column + 1].getName() === "Empty")
+                        possibleMoves.push([this.row + 2, this.column + 1]);
+                }
+                if (this.column - 1 > -1) {
+                    if (board[this.row + 2][this.column - 1].getColor() === "w")
+                        possibleEats.push([this.row + 2, this.column - 1]);
+                    else if (board[this.row + 2][this.column - 1].getName() === "Empty")
+                        possibleMoves.push([this.row + 2, this.column - 1]);
+                }
+            }
+            if (this.row - 2 > -1) {
+                if (this.column + 1 < BOARD_LENGTH) {
+                    if (board[this.row - 2][this.column + 1].getColor() === "w")
+                        possibleEats.push([this.row - 2, this.column + 1]);
+                    else if (board[this.row - 2][this.column + 1].getName() === "Empty")
+                        possibleMoves.push([this.row - 2, this.column + 1]);
+                }
+                if (this.column - 1 > -1) {
+                    if (board[this.row - 2][this.column - 1].getColor() === "w")
+                        possibleEats.push([this.row - 2, this.column - 1]);
+                    else if (board[this.row - 2][this.column - 1].getName() === "Empty")
+                        possibleMoves.push([this.row - 2, this.column - 1]);
+                }
+            }
+            if (this.column + 2 < BOARD_LENGTH) {
+                if (this.row + 1 < BOARD_LENGTH) {
+                    if (board[this.row + 1][this.column + 2].getColor() === "w")
+                        possibleEats.push([this.row + 1, this.column + 2]);
+                    else if (board[this.row + 1][this.column + 2].getName() === "Empty")
+                        possibleMoves.push([this.row + 1, this.column + 2]);
+                }
+                if (this.row - 1 > -1) {
+                    if (board[this.row - 1][this.column + 2].getColor() === "w")
+                        possibleEats.push([this.row - 1, this.column + 2]);
+                    else if (board[this.row - 1][this.column + 2].getName() === "Empty")
+                        possibleMoves.push([this.row - 1, this.column + 2]);
+                }
+            }
+            if (this.column - 2 > -1) {
+                if (this.row + 1 < BOARD_LENGTH) {
+                    if (board[this.row + 1][this.column - 2].getColor() === "w")
+                        possibleEats.push([this.row + 1, this.column - 2]);
+                    else if (board[this.row + 1][this.column - 2].getName() === "Empty")
+                        possibleMoves.push([this.row + 1, this.column - 2]);
+                } if (this.row - 1 > -1) {
+                    if (board[this.row - 1][this.column - 2].getColor() === "w")
+                        possibleEats.push([this.row - 1, this.column - 2]);
+                    else if (board[this.row - 1][this.column - 2].getName() === "Empty")
+                        possibleMoves.push([this.row - 1, this.column - 2]);
+                }
+            }
+
         }
+        return [possibleMoves, possibleEats];
     }
 }
 
@@ -174,7 +288,57 @@ class King extends Piece {
         super(row, column, name, pieceImage, color, additionalStyles);
     }
     showPossibleMoves(board) {
-
+        let possibleEats = [];
+        let possibleMoves = [];
+        // Can be spreaded with functions for each side.
+        if (this.row - 1 > -1) { // Checks the upper row. 
+            if (this.column - 1 > -1) {
+                if (board[this.row - 1][this.column - 1].getColor() === "b")
+                    possibleEats.push([this.row - 1, this.column - 1]);
+                else if (board[this.row - 1][this.column - 1].getName() === "Empty")
+                    possibleMoves.push([this.row - 1, this.column - 1]);
+            }
+            if (this.column + 1 < BOARD_LENGTH) {
+                if (board[this.row - 1][this.column + 1].getColor() === "b")
+                    possibleEats.push([this.row - 1, this.column + 1]);
+                else if (board[this.row - 1][this.column + 1].getName() === "Empty")
+                    possibleMoves.push([this.row - 1, this.column + 1]);
+            }
+            if (board[this.row - 1][this.column].getColor() === "b")
+                possibleEats.push([this.row - 1, this.column]);
+            else if (board[this.row - 1][this.column].getName() === "Empty")
+                possibleMoves.push([this.row - 1, this.column]);
+        }
+        if (this.column - 1 > -1) { // Checks the left side
+            if (board[this.row][this.column - 1].getColor() === "b")
+                possibleEats.push([this.row, this.column - 1]);
+            else if (board[this.row][this.column - 1].getName() === "Empty")
+                possibleMoves.push([this.row, this.column - 1]);
+        }
+        if (this.column + 1 < BOARD_LENGTH) { // Checks the right side
+            if (board[this.row][this.column + 1].getColor() === "b")
+                possibleEats.push([this.row, this.column + 1]);
+            else if (board[this.row][this.column + 1].getName() === "Empty")
+                possibleMoves.push([this.row, this.column + 1]);
+        }
+        if (this.row + 1 < BOARD_LENGTH) { // Checks the bottom row. 
+            if (this.column - 1 > -1) {
+                if (board[this.row + 1][this.column - 1].getColor() === "b")
+                    possibleEats.push([this.row + 1, this.column - 1]);
+                else if (board[this.row + 1][this.column - 1].getName() === "Empty")
+                    possibleMoves.push([this.row + 1, this.column - 1]);
+            }
+            if (this.column + 1 < BOARD_LENGTH) {
+                if (board[this.row + 1][this.column + 1].getColor() === "b")
+                    possibleEats.push([this.row - 1, this.column + 1]);
+                else if (board[this.row + 1][this.column + 1].getName() === "Empty")
+                    possibleMoves.push([this.row + 1, this.column + 1]);
+            }
+            if (board[this.row + 1][this.column].getColor() === "b")
+                possibleEats.push([this.row + 1, this.column]);
+            else if (board[this.row + 1][this.column].getName() === "Empty")
+                possibleMoves.push([this.row + 1, this.column]);
+        }
     }
 }
 
@@ -195,5 +359,8 @@ class Empty {
     }
     getName() {
         return this.name;
+    }
+    getColor() {
+        return "None";
     }
 }

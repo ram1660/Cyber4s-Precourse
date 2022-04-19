@@ -1,4 +1,6 @@
 const BOARD_LENGTH = 8;
+const WHITE_PLAYER = "w";
+const BLACK_PLAYER = "b";
 const objBoard = [];
 let currentPaintedCell;
 let isSecondClick = false; // Controls between a select and a move click.
@@ -33,7 +35,7 @@ function cellInteraction(e) {
   markPossibleMoves(e);
   // if (!isSecondClick)
   // else
-  movePiece(e);
+  // movePiece(e);
 
 }
 
@@ -50,12 +52,11 @@ function markPossibleMoves(e) {
 
   currentPaintedCell = clickedCell;
   currentPaintedCell.classList.add("selectedCell");
-  const possibleMoves = objPiece.showPossibleMoves(objBoard);
+  const [possibleMoves, possibleEats] = objPiece.showPossibleMoves(objBoard);
   const board = document.getElementsByTagName("table")[0];
   for (const move of possibleMoves) {
     let [row, col] = move; // Using destructuring
     let movableCell = board.rows[row].cells[col];
-    console.dir(movableCell);
     movableCell.classList.add("possibleMove");
   }
 }
@@ -78,8 +79,8 @@ function piecePlacer(row, column, node) {
   }
 
   let color;
-  if (row === 0 || row === 1) color = "b";
-  else if (row === 7 || row === 6) color = "w";
+  if (row === 0 || row === 1) color = BLACK_PLAYER;
+  else if (row === 7 || row === 6) color = WHITE_PLAYER;
 
   if (row === 0 || row === 7) {
     if (column === 0 || column === 7)
