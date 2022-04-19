@@ -26,6 +26,7 @@ function setupGui() {
   boardContainer.appendChild(elementVar);
 }
 
+
 /**
  * Handles all board interactions.
  * @param {MouseEvent} e Object to the cell that got clicked
@@ -100,6 +101,25 @@ function piecePlacer(row, column, node) {
   node.style.backgroundImage = objBoard[row][column].getImage();
   node.style.cursor = "pointer";
 }
+
+class BoardData{
+  constructor(){
+    this.board = [];
+
+  }
+  setupBoardPieces(){
+    for(let row = 0; row < BOARD_LENGTH; row++){
+      for(let column = 0; column < BOARD_LENGTH; column++){
+        if (row !== 0 && row !== 1 && row !== 7 && row !== 6) {
+          this.board[row].push(new Empty(row, column));
+          continue;
+        }
+
+      }
+    }
+  }
+}
+
 
 function buildBoard() {
   const board = document.createElement("table");

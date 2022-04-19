@@ -1,0 +1,165 @@
+:root{
+    --wiki-bg: #f8f9fa;
+    --wiki-border: #98f5ff;
+    --spacing-line: 1.8;
+}
+
+.header > nav{
+    float:right; /*Place everything on the right side of the div*/
+    height: 100%; /*Takes 100% of the parent height*/
+    display:flex; 
+    flex-direction: row;
+    justify-content:flex-end;
+    /* align-content: space-between;  */
+}
+.header{
+    font-family: sans-serif;
+    height: 150px;
+    border-bottom: 1px solid var(--wiki-border);
+    background-color:var(--wiki-bg);
+
+}
+#account-actions{
+    position: absolute;
+}
+.logo{
+    width: 10px;
+    height: 10px;
+}
+#page-operations{ /*It took me an hour to make this navigation.*/
+    align-self: flex-end;
+    white-space: nowrap;
+}
+#page-operations > span{
+    border-right: 1px solid var(--wiki-bg);
+    padding-right: 3px;
+}
+#page-operations > input{
+    width: 200px;
+    background: url("https://en.wikipedia.org/w/skins/Vector/resources/common/images/search.svg?bbf78");
+    background-repeat: no-repeat;
+    background-position: right;
+    height: 1.5em;
+}
+.title {
+    border-bottom: 2px solid black;
+    margin-bottom: 3px;
+}
+
+p {
+    font-family: sans-serif;
+    line-height: var(--spacing-line);
+    width: 75%;
+}
+
+.heading {
+    margin-bottom: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.apple-images {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+#aside-info {
+    position: absolute; /* Pretty hardcoded*/
+    left: 1500px;
+    top: 250px;
+    border: 2px solid gray;
+}
+.side-info-aligment{
+    vertical-align: middle;
+    line-height: var(--spacing-line);
+    text-align: center;
+}
+.side-info-title {
+    position: relative;
+    background-color: greenyellow;
+    margin: 2%;
+}
+
+a{
+    text-decoration: none;
+    color: rgb(0, 93, 124);
+}
+
+a:hover {
+    text-decoration: underline solid 1px;
+}
+#wiki-logo-link{
+    text-decoration: none;
+    
+}
+#wiki-logo-link img{
+    height: 100%;
+}
+#intro p {
+    width: 50%;
+    height: auto;
+}
+
+#content-list {
+    border: 2px solid black;
+    background-color:  #f8f9fa;
+    position: relative;
+    width: 250px;
+}
+
+#content-list label {
+    font-weight: bold;
+    text-align: center;
+    display: block;
+}
+
+.little-tab {
+    padding-left: 10px;
+}
+
+ol.table-of-content {
+    counter-reset: item
+}
+
+ol.table-of-content > li {
+    display: block
+}
+
+ol.table-of-content > li::before {
+    content: counters(item, ".") " ";
+    counter-increment: item;
+}
+
+#section{
+    display:flex;
+}
+
+.sub-title{
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.off-topic-info{
+    padding-left: 30px;
+    margin: 10px 0px;
+    font-style: italic;
+}
+
+.apple-type{
+    text-align: center;
+    padding: 0.5em;
+}
+
+.apple-collection{
+    display:flex;
+    flex-wrap: wrap;
+    justify-content:center;
+    
+}
+.body-list{
+    width: 75%;
+    line-height: var(--spacing-line);
+}
+:root{
+    font-family: sans-serif;
+}
