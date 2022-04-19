@@ -1,7 +1,8 @@
+
 const BOARD_LENGTH = 8;
 const WHITE_PLAYER = "w";
 const BLACK_PLAYER = "b";
-const objBoard = [];
+const objBoard = new BoardData();
 let currentPaintedCell;
 let isSecondClick = false; // Controls between a select and a move click.
 
@@ -33,7 +34,7 @@ function setupGui() {
  * @returns None
  */
 function cellInteraction(e) {
-  markPossibleMoves(e);
+  markPossibleOptions(e);
   // if (!isSecondClick)
   // else
   // movePiece(e);
@@ -41,24 +42,32 @@ function cellInteraction(e) {
 }
 
 
-function markPossibleMoves(e) {
+function markPossibleOptions(e) {
   isSecondClick = true;
   const clickedCell = e.target;
   const row = e.target.parentElement.rowIndex, column = e.target.cellIndex;
-  if ((objBoard[row][column] instanceof Piece) === false) return;
-  const objPiece = objBoard[row][column];
+  const piece = objBoard.getPiece(row, column);
+  if(piece === null){
+    // Deselect the piece.
+    return;
+  }
   // We know for sure it's a piece
   if (currentPaintedCell !== undefined)
     currentPaintedCell.classList.remove("selectedCell");
 
   currentPaintedCell = clickedCell;
   currentPaintedCell.classList.add("selectedCell");
-  const [possibleMoves, possibleEats] = objPiece.showPossibleMoves(objBoard);
+  const [possibleMoves, possibleEats] = piece.showPossibleMoves(objBoard.getBoard());
   const board = document.getElementsByTagName("table")[0];
   for (const move of possibleMoves) {
-    let [row, col] = move; // Using destructuring
-    let movableCell = board.rows[row].cells[col];
+    const [row, col] = move; // Using destructuring
+    const movableCell = board.rows[row].cells[col];
     movableCell.classList.add("possibleMove");
+  }
+  for(const eatMove of possibleEats){
+    const [row, col] = eatMove;
+    const eatablePiece = board.row[row].cell[col];
+    eatablePiece.classList.add("possibleEat");
   }
 }
 
@@ -70,75 +79,55 @@ function markPossibleMoves(e) {
  * @param {HTMLTableCellElement} node The HTML to apply the styles and image
  * @returns 
  */
-function piecePlacer(row, column, node) {
+function piecePlacer(row, column, node, board) {
   // Applying style to all tds.
   node.style.backgroundRepeat = "no-repeat";
   node.style.backgroundPosition = "center";
-  if (row !== 0 && row !== 1 && row !== 7 && row !== 6) {
-    objBoard[row].push(new Empty(row, column));
-    return;
-  }
+  // if (row !== 0 && row !== 1 && row !== 7 && row !== 6) {
+  //   objBoard[row].push(new Empty(row, column));
+  //   return;
+  // }
 
-  let color;
-  if (row === 0 || row === 1) color = BLACK_PLAYER;
-  else if (row === 7 || row === 6) color = WHITE_PLAYER;
+  // let color;
+  // if (row === 0 || row === 1) color = BLACK_PLAYER;
+  // else if (row === 7 || row === 6) color = WHITE_PLAYER;
 
-  if (row === 0 || row === 7) {
-    if (column === 0 || column === 7)
-      objBoard[row].push(new Rook(row, column, "Rook", `url('pieces/${color}Rook.png')`, color));
-    else if (column === 1 || column === 6)
-      objBoard[row].push(new Knight(row, column, "Knight", `url('pieces/${color}Knight.png')`, color));
-    else if (column === 2 || column === 5)
-      objBoard[row].push(new Bishop(row, column, "Bishop", `url('pieces/${color}Bishop.png')`, color));
-    else if (column === 3)
-      objBoard[row].push(new Queen(row, column, "Queen", `url('pieces/${color}Queen.png')`, color));
-    else if (column === 4)
-      objBoard[row].push(new King(row, column, "King", `url('pieces/${color}King.png')`, color));
-  }
-  else if (row === 1 || row === 6) {
-    objBoard[row].push(new Pawn(row, column, "Pawn", `url('pieces/${color}Pawn.png')`, color));
-  }
-  node.style.backgroundImage = objBoard[row][column].getImage();
+  // if (row === 0 || row === 7) {
+  //   if (column === 0 || column === 7)
+  //     objBoard[row].push(new Rook(row, column, "Rook", `url('pieces/${color}Rook.png')`, color));
+  //   else if (column === 1 || column === 6)
+  //     objBoard[row].push(new Knight(row, column, "Knight", `url('pieces/${color}Knight.png')`, color));
+  //   else if (column === 2 || column === 5)
+  //     objBoard[row].push(new Bishop(row, column, "Bishop", `url('pieces/${color}Bishop.png')`, color));
+  //   else if (column === 3)
+  //     objBoard[row].push(new Queen(row, column, "Queen", `url('pieces/${color}Queen.png')`, color));
+  //   else if (column === 4)
+  //     objBoard[row].push(new King(row, column, "King", `url('pieces/${color}King.png')`, color));
+  // }
+  // else if (row === 1 || row === 6) {
+  //   objBoard[row].push(new Pawn(row, column, "Pawn", `url('pieces/${color}Pawn.png')`, color));
+  // }
+  node.style.backgroundImage = board[row][column].getImage();
   node.style.cursor = "pointer";
 }
-
-class BoardData{
-  constructor(){
-    this.board = [];
-
-  }
-  setupBoardPieces(){
-    for(let row = 0; row < BOARD_LENGTH; row++){
-      for(let column = 0; column < BOARD_LENGTH; column++){
-        if (row !== 0 && row !== 1 && row !== 7 && row !== 6) {
-          this.board[row].push(new Empty(row, column));
-          continue;
-        }
-
-      }
-    }
-  }
-}
-
 
 function buildBoard() {
   const board = document.createElement("table");
   const boardBody = document.createElement("tbody");
+  const boardPieces = objBoard.getBoard(); 
   let boardRow;
   let boardCell;
+  
   board.setAttribute("id", "board");
   for (let i = 0; i < BOARD_LENGTH; i++) {
     boardRow = boardBody.insertRow();
-    objBoard.push([]);
     for (let j = 0; j < BOARD_LENGTH; j++) {
       boardCell = boardRow.insertCell();
       if ((i + j) % 2 === 0) boardCell.className = "white";
       else boardCell.className = "black";
-      piecePlacer(i, j, boardCell);
+      piecePlacer(i, j, boardCell, boardPieces);
     }
   }
-  objBoard[3][3] = new Queen(3, 3, "Queen", `url('pieces/wQueen.png')`, 'w');
-  console.log(objBoard[3][3].showPossibleMoves(objBoard));
 
   board.appendChild(boardBody);
   board.addEventListener("click", (e) => {
