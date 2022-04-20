@@ -23,6 +23,10 @@ class Piece {
     getColor() {
         return this.color;
     }
+    setPosition(row, column){
+        this.row = row;
+        this.column = column;
+    }
 }
 
 class Pawn extends Piece {

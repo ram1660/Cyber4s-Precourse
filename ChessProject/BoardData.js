@@ -37,12 +37,24 @@ class BoardData {
         }
     }
 
-    getPiece(row, column){
-        if(this.board[row][column] instanceof Empty) return null;
+    getPiece(row, column) {
+        if (this.board[row][column] instanceof Empty) return null;
         return this.board[row][column];
     }
 
     getBoard() {
         return this.board;
+    }
+
+    movePiece(src, target){
+        if(src.length !== 2 || target.length !== 2){
+            console.log("something went wrong");
+            return;
+        }
+        const [srcRow,srcColumn] = src;
+        const [targetRow, targetColumn] = target;
+        this.board[srcRow][srcColumn].setPosition(srcRow, srcColumn);
+        this.board[targetRow][targetColumn] = this.board[srcRow][srcColumn];
+        this.board[srcRow][srcColumn] = new Empty(srcRow, srcColumn);
     }
 }

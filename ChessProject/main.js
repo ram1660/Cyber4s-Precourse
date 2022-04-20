@@ -1,4 +1,3 @@
-
 const BOARD_LENGTH = 8;
 const WHITE_PLAYER = "w";
 const BLACK_PLAYER = "b";
@@ -34,23 +33,58 @@ function setupGui() {
  * @returns None
  */
 function cellInteraction(e) {
-  markPossibleOptions(e);
-  // if (!isSecondClick)
-  // else
-  // movePiece(e);
+  const cell = e.target;
+  if(!isSecondClick)
+    markPossibleOptions(cell);
+  else
+    movePiece(cell);
+
+}
+function movePiece(clickedCell) {
+  const row = clickedCell.parentElement.rowIndex, column = clickedCell.cellIndex;
+  const board = document.getElementsByTagName("table")[0];
+  const targetCell = board.rows[row].cells[column];
+  if (targetCell.classList.contains("possibleEat") || targetCell.classList.contains("possibleMove")) {
+    targetCell.style.backgroundImage = currentPaintedCell.style.backgroundImage;
+    deSelectPiece();
+    objBoard.movePiece([currentPaintedCell.parentElement.rowIndex, currentPaintedCell.cellIndex], [row, column]);
+    currentPaintedCell.classList.remove("selectedCell");
+    currentPaintedCell.style.backgroundImage = "none";
+  }else{
+    deSelectPiece();
+    currentPaintedCell.classList.remove("selectedCell");
+  }
+  currentPaintedCell = undefined;
+  isSecondClick = false;
+}
+function deSelectPiece() { // Can be improved using objects
+  const board = document.getElementsByTagName("table")[0];
+  for (let i = 0; i < BOARD_LENGTH; i++) {
+    for (let j = 0; j < BOARD_LENGTH; j++) {
+      board.rows[i].cells[j].classList.remove("possibleEat");
+      board.rows[i].cells[j].classList.remove("possibleMove");
+    }
+  }
 
 }
 
 
-function markPossibleOptions(e) {
-  isSecondClick = true;
-  const clickedCell = e.target;
-  const row = e.target.parentElement.rowIndex, column = e.target.cellIndex;
+function markPossibleOptions(clickedCell) {
+  const row = clickedCell.parentElement.rowIndex, column = clickedCell.cellIndex;
   const piece = objBoard.getPiece(row, column);
-  if(piece === null){
-    // Deselect the piece.
+  if (piece === null) {
+    deSelectPiece();
+    currentPaintedCell.classList.remove("selectedCell");
+    currentPaintedCell = undefined;
     return;
   }
+  if (piece !== currentPaintedCell && currentPaintedCell !== undefined){
+    deSelectPiece();
+    currentPaintedCell.classList.remove("selectedCell");
+    currentPaintedCell = undefined;
+  }
+  isSecondClick = true;
+
   // We know for sure it's a piece
   if (currentPaintedCell !== undefined)
     currentPaintedCell.classList.remove("selectedCell");
@@ -64,8 +98,8 @@ function markPossibleOptions(e) {
     const movableCell = board.rows[row].cells[col];
     movableCell.classList.add("possibleMove");
   }
-  for(const eatMove of possibleEats){
-    const [row, col] = eatMove;
+  for (const eatMove of possibleEats) {
+    const [row, col] = eatMove; // Using destructuring
     const eatablePiece = board.row[row].cell[col];
     eatablePiece.classList.add("possibleEat");
   }
@@ -90,10 +124,10 @@ function piecePlacer(row, column, node, board) {
 function buildBoard() {
   const board = document.createElement("table");
   const boardBody = document.createElement("tbody");
-  const boardPieces = objBoard.getBoard(); 
+  const boardPieces = objBoard.getBoard();
   let boardRow;
   let boardCell;
-  
+
   board.setAttribute("id", "board");
   for (let i = 0; i < BOARD_LENGTH; i++) {
     boardRow = boardBody.insertRow();
