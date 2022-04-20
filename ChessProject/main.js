@@ -83,30 +83,6 @@ function piecePlacer(row, column, node, board) {
   // Applying style to all tds.
   node.style.backgroundRepeat = "no-repeat";
   node.style.backgroundPosition = "center";
-  // if (row !== 0 && row !== 1 && row !== 7 && row !== 6) {
-  //   objBoard[row].push(new Empty(row, column));
-  //   return;
-  // }
-
-  // let color;
-  // if (row === 0 || row === 1) color = BLACK_PLAYER;
-  // else if (row === 7 || row === 6) color = WHITE_PLAYER;
-
-  // if (row === 0 || row === 7) {
-  //   if (column === 0 || column === 7)
-  //     objBoard[row].push(new Rook(row, column, "Rook", `url('pieces/${color}Rook.png')`, color));
-  //   else if (column === 1 || column === 6)
-  //     objBoard[row].push(new Knight(row, column, "Knight", `url('pieces/${color}Knight.png')`, color));
-  //   else if (column === 2 || column === 5)
-  //     objBoard[row].push(new Bishop(row, column, "Bishop", `url('pieces/${color}Bishop.png')`, color));
-  //   else if (column === 3)
-  //     objBoard[row].push(new Queen(row, column, "Queen", `url('pieces/${color}Queen.png')`, color));
-  //   else if (column === 4)
-  //     objBoard[row].push(new King(row, column, "King", `url('pieces/${color}King.png')`, color));
-  // }
-  // else if (row === 1 || row === 6) {
-  //   objBoard[row].push(new Pawn(row, column, "Pawn", `url('pieces/${color}Pawn.png')`, color));
-  // }
   node.style.backgroundImage = board[row][column].getImage();
   node.style.cursor = "pointer";
 }
