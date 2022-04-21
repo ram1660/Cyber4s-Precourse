@@ -33,49 +33,33 @@ class Pawn extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
         this.isFirstMove = true;
+        this.direction = this.color === "w" ? -1 : 1; // Controls which direction the pawn should move.
     }
     showPossibleMoves(board) {
         const possibleMoves = [];
         const possibleEats = [];
         // TODO: Add bounderies check
-        if (this.isFirstMove) { // Is it the first move?
-            if (this.color === "w") {
-                if (board[this.row - 2][this.column].getName() === "Empty")
-                    possibleMoves.push([this.row - 2, this.column]);
-            } else {
-                if (board[this.row + 2][this.column].getName() === "Empty")
-                    possibleMoves.push([this.row + 2, this.column]);
-            }
-            this.addNearMovableCell(board, possibleMoves);
-        } else { // Is it the second move?
-            this.addNearMovableCell(board, possibleMoves);
-        }
-        if (this.color === "w") {
-            if (this.row - 1 > -1) { // White eat
-                if (this.column - 1 > -1 && board[this.row - 1][this.column - 1].getColor() === this.enemyColor)
-                    possibleEats.push([this.row - 1, this.column - 1]);
-                if (this.column + 1 < BOARD_LENGTH && board[this.row - 1][this.column + 1].getColor() === this.enemyColor)
-                    possibleEats.push([this.row - 1, this.column + 1]);
-            }
-        } else {
-            if (this.row + 1 < BOARD_LENGTH) { // Black eat
-                if (this.column - 1 > -1 && board[this.row + 1][this.column - 1].getColor() === this.enemyColor)
-                    possibleEats.push([this.row + 1, this.column - 1]);
-                if (this.column + 1 < BOARD_LENGTH && board[this.row + 1][this.column + 1].getColor() === this.enemyColor)
-                    possibleEats.push([this.row + 1, this.column + 1]);
-            }
+        if (this.isFirstMove) // Is it the first move?
+            if (board[this.row + 2 * this.direction][this.column].getName() === "Empty")
+                possibleMoves.push([this.row + 2 * this.direction, this.column]);
+
+        this.addNearMovableCell(board, possibleMoves);
+        if (this.row - 1 > -1 && this.row + 1 < BOARD_LENGTH) {
+            if (this.column + 1 > -1 && board[this.row + 1 * this.direction][this.column - 1].getColor() === this.enemyColor)
+                possibleEats.push([this.row + 1 * this.direction, this.column - 1]);
+            if (this.column + 1 < BOARD_LENGTH && board[this.row + 1 * this.direction][this.column + 1].getColor() === this.enemyColor)
+                possibleEats.push([this.row + 1 * this.direction, this.column + 1]);
         }
         return [possibleMoves, possibleEats];
     }
+    /**
+     * Adds the one square move if possible.
+     * @param {Piece[][]} board The current board
+     * @param {Array} possibleMoves A reference to the possible moves array
+     */
     addNearMovableCell(board, possibleMoves) {
-        if (this.color === "w") {
-            if (board[this.row - 1][this.column].getName() === "Empty")
-                possibleMoves.push([this.row - 1, this.column]);
-        } else {
-            if (board[this.row + 1][this.column].getName() === "Empty")
-                possibleMoves.push([this.row + 1, this.column]);
-        }
-        return possibleMoves;
+        if (board[this.row + 1 * this.direction][this.column].getName() === "Empty")
+            possibleMoves.push([this.row + 1 * this.direction, this.column]);
     }
     setPosition(row, column) {
         this.row = row;
