@@ -23,7 +23,7 @@ class Piece {
     getColor() {
         return this.color;
     }
-    setPosition(row, column){
+    setPosition(row, column) {
         this.row = row;
         this.column = column;
     }
@@ -40,47 +40,46 @@ class Pawn extends Piece {
         // TODO: Add bounderies check
         if (this.isFirstMove) { // Is it the first move?
             if (this.color === "w") {
-                this.addNearMovableCell(board, possibleMoves);
-                if (board[this.row - 2][this.column].getName() !== "Empty") return possibleMoves;
-                possibleMoves.push([this.row - 2, this.column]);
+                if (board[this.row - 2][this.column].getName() === "Empty")
+                    possibleMoves.push([this.row - 2, this.column]);
             } else {
-                this.addNearMovableCell(board, possibleMoves);
-                if (board[this.row + 2][this.column].getName() !== "Empty") return possibleMoves;
-                possibleMoves.push([this.row + 2, this.column]);
+                if (board[this.row + 2][this.column].getName() === "Empty")
+                    possibleMoves.push([this.row + 2, this.column]);
             }
+            this.addNearMovableCell(board, possibleMoves);
         } else { // Is it the second move?
-            if (this.color === "w")
-                this.addNearMovableCell(board, possibleMoves);
-            else
-                this.addNearMovableCell(board, possibleMoves);
+            this.addNearMovableCell(board, possibleMoves);
         }
         if (this.color === "w") {
-            if (this.row - 1) { // White eat
-                if (this.column - 1 > -1 && board[this.row - 1][this.column - 1] === this.enemyColor)
+            if (this.row - 1 > -1) { // White eat
+                if (this.column - 1 > -1 && board[this.row - 1][this.column - 1].getColor() === this.enemyColor)
                     possibleEats.push([this.row - 1, this.column - 1]);
-                if (this.column + 1 < BOARD_LENGTH && board[this.row - 1][this.column + 1] === this.enemyColor)
+                if (this.column + 1 < BOARD_LENGTH && board[this.row - 1][this.column + 1].getColor() === this.enemyColor)
                     possibleEats.push([this.row - 1, this.column + 1]);
             }
         } else {
-            if (this.row + 1) { // Black eat
-                if (this.column - 1 > -1 && board[this.row - 1][this.column - 1] === this.enemyColor)
-                    possibleEats.push([this.row - 1, this.column - 1]);
-                if (this.column + 1 < BOARD_LENGTH && board[this.row - 1][this.column + 1] === this.enemyColor)
-                    possibleEats.push([this.row - 1, this.column + 1]);
+            if (this.row + 1 < BOARD_LENGTH) { // Black eat
+                if (this.column - 1 > -1 && board[this.row + 1][this.column - 1].getColor() === this.enemyColor)
+                    possibleEats.push([this.row + 1, this.column - 1]);
+                if (this.column + 1 < BOARD_LENGTH && board[this.row + 1][this.column + 1].getColor() === this.enemyColor)
+                    possibleEats.push([this.row + 1, this.column + 1]);
             }
         }
         return [possibleMoves, possibleEats];
     }
     addNearMovableCell(board, possibleMoves) {
         if (this.color === "w") {
-            if (board[this.row - 1][this.column].getName() !== "Empty") return possibleMoves;
-            possibleMoves.push([this.row - 1, this.column]);
+            if (board[this.row - 1][this.column].getName() === "Empty")
+                possibleMoves.push([this.row - 1, this.column]);
         } else {
-            if (board[this.row + 1][this.column].getName() !== "Empty") return possibleMoves;
-            possibleMoves.push([this.row + 1, this.column]);
+            if (board[this.row + 1][this.column].getName() === "Empty")
+                possibleMoves.push([this.row + 1, this.column]);
         }
+        return possibleMoves;
     }
-    movePiece(board) {
+    setPosition(row, column) {
+        this.row = row;
+        this.column = column;
         this.isFirstMove = false;
     }
 }
@@ -161,7 +160,7 @@ class Queen extends Piece {
         while (i > -1 && j < BOARD_LENGTH) { // Top right
             if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
                 break;
-            if (board[i][this.column].getColor() === this.enemyColor) {
+            if (board[i][j].getColor() === this.enemyColor) {
                 possibleEats.push([i, j]);
                 break;
             } else if (board[i][j].getName() === "Empty")
@@ -174,7 +173,7 @@ class Queen extends Piece {
         while (i < BOARD_LENGTH && j < BOARD_LENGTH) { // Bottom right
             if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
                 break;
-            if (board[i][this.column].getColor() === this.enemyColor) {
+            if (board[i][j].getColor() === this.enemyColor) {
                 possibleEats.push([i, j]);
                 break;
             } else if (board[i][j].getName() === "Empty")
@@ -388,7 +387,7 @@ class Bishop extends Piece {
         while (i > -1 && j < BOARD_LENGTH) { // Top right
             if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
                 break;
-            if (board[i][this.column].getColor() === this.enemyColor) {
+            if (board[i][j].getColor() === this.enemyColor) {
                 possibleEats.push([i, j]);
                 break;
             } else if (board[i][j].getName() === "Empty")
@@ -401,7 +400,7 @@ class Bishop extends Piece {
         while (i < BOARD_LENGTH && j < BOARD_LENGTH) { // Bottom right
             if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
                 break;
-            if (board[i][this.column].getColor() === this.enemyColor) {
+            if (board[i][j].getColor() === this.enemyColor) {
                 possibleEats.push([i, j]);
                 break;
             } else if (board[i][j].getName() === "Empty")
@@ -438,7 +437,7 @@ class Empty {
     getColor() {
         return "None";
     }
-    getImage(){
+    getImage() {
         return "none";
     }
 }

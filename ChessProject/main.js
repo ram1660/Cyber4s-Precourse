@@ -54,6 +54,7 @@ function movePiece(clickedCell) {
     deSelectPiece();
     currentPaintedCell.classList.remove("selectedCell");
   }
+
   currentPaintedCell = undefined;
   isSecondClick = false;
 }
@@ -72,7 +73,10 @@ function deSelectPiece() { // Can be improved using objects
 function markPossibleOptions(clickedCell) {
   const row = clickedCell.parentElement.rowIndex, column = clickedCell.cellIndex;
   const piece = objBoard.getPiece(row, column);
-  if (piece === null) {
+  if(piece === null && currentPaintedCell === undefined) return; // There is nothing to deselect or select.
+  
+  if (piece === null && currentPaintedCell !== undefined) {
+
     deSelectPiece();
     currentPaintedCell.classList.remove("selectedCell");
     currentPaintedCell = undefined;
@@ -100,7 +104,7 @@ function markPossibleOptions(clickedCell) {
   }
   for (const eatMove of possibleEats) {
     const [row, col] = eatMove; // Using destructuring
-    const eatablePiece = board.row[row].cell[col];
+    const eatablePiece = board.rows[row].cells[col];
     eatablePiece.classList.add("possibleEat");
   }
 }

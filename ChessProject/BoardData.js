@@ -53,7 +53,7 @@ class BoardData {
         }
         const [srcRow,srcColumn] = src;
         const [targetRow, targetColumn] = target;
-        this.board[srcRow][srcColumn].setPosition(srcRow, srcColumn);
+        this.board[srcRow][srcColumn].setPosition(targetRow, targetColumn);
         this.board[targetRow][targetColumn] = this.board[srcRow][srcColumn];
         this.board[srcRow][srcColumn] = new Empty(srcRow, srcColumn);
     }
