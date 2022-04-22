@@ -27,6 +27,9 @@ class Piece {
         this.row = row;
         this.column = column;
     }
+    getEnemyColor(){
+        return this.enemyColor;
+    }
 }
 
 class Pawn extends Piece {
@@ -378,7 +381,7 @@ class Empty {
     constructor(row, column) {
         this.row = row;
         this.column = column;
-        this.name = "Empty"
+        this.name = "Empty";
     }
     getName() {
         return this.name;

@@ -1,6 +1,7 @@
 const BOARD_LENGTH = 8;
 const WHITE_PLAYER = "w";
 const BLACK_PLAYER = "b";
+let turn = "w"; // w = White b = Black
 const objBoard = new BoardData();
 let currentPaintedCell;
 let isSecondClick = false; // Controls between a select and a move click.
@@ -51,15 +52,14 @@ function movePiece(clickedCell) {
   const board = document.getElementsByTagName("table")[0];
   const targetCell = board.rows[row].cells[column];
   if (targetCell.classList.contains("possibleEat") || targetCell.classList.contains("possibleMove")) {
-    if(targetCell.classList.contains("possibleEat")){
+    if (targetCell.classList.contains("possibleEat")) {
       targetCell.firstChild.remove();
     }
     targetCell.appendChild(currentPaintedCell.firstChild);
     objBoard.movePiece([currentPaintedCell.parentElement.rowIndex, currentPaintedCell.cellIndex], [row, column]);
-    currentPaintedCell.classList.remove("selectedCell");
-  } else {
-    currentPaintedCell.classList.remove("selectedCell");
+    turn = objBoard.getPiece(row, column).getEnemyColor(); // Switching turn.
   }
+  currentPaintedCell.classList.remove("selectedCell");
   currentPaintedCell.style.cursor = "default";
   deSelectPiece();
 
@@ -83,18 +83,15 @@ function markPossibleOptions(clickedCell) {
   const piece = objBoard.getPiece(row, column);
   if (piece === null && currentPaintedCell === undefined) return; // There is nothing to deselect or select.
 
-  if (piece === null && currentPaintedCell !== undefined) {
+  if ((piece === null || piece !== currentPaintedCell) && currentPaintedCell !== undefined) {
 
     deSelectPiece();
     currentPaintedCell.classList.remove("selectedCell");
     currentPaintedCell = undefined;
     return;
   }
-  if (piece !== currentPaintedCell && currentPaintedCell !== undefined) {
-    deSelectPiece();
-    currentPaintedCell.classList.remove("selectedCell");
-    currentPaintedCell = undefined;
-  }
+
+  if (turn !== piece.getColor()) return;
   isSecondClick = true;
 
   // We know for sure it's a piece

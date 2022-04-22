@@ -36,7 +36,12 @@ class BoardData {
             }
         }
     }
-
+    /**
+     * 
+     * @param {Number} row The row of the piece
+     * @param {Number} column The column of the piece
+     * @returns {Piece}
+     */
     getPiece(row, column) {
         if (this.board[row][column] instanceof Empty) return null;
         return this.board[row][column];
