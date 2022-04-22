@@ -55,8 +55,10 @@ body{
 
 .possibleMove{
     background-color: #458a84;
+    cursor: pointer;
 }
 
 .possibleEat{
     background-color: #bd0808;
+    cursor: pointer;
 }

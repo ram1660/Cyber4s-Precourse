@@ -34,7 +34,7 @@ function setupGui() {
  */
 function cellInteraction(e) {
   const cell = e.target;
-  if(!isSecondClick)
+  if (!isSecondClick)
     markPossibleOptions(cell);
   else
     movePiece(cell);
@@ -50,7 +50,7 @@ function movePiece(clickedCell) {
     objBoard.movePiece([currentPaintedCell.parentElement.rowIndex, currentPaintedCell.cellIndex], [row, column]);
     currentPaintedCell.classList.remove("selectedCell");
     currentPaintedCell.style.backgroundImage = "none";
-  }else{
+  } else {
     deSelectPiece();
     currentPaintedCell.classList.remove("selectedCell");
   }
@@ -73,8 +73,8 @@ function deSelectPiece() { // Can be improved using objects
 function markPossibleOptions(clickedCell) {
   const row = clickedCell.parentElement.rowIndex, column = clickedCell.cellIndex;
   const piece = objBoard.getPiece(row, column);
-  if(piece === null && currentPaintedCell === undefined) return; // There is nothing to deselect or select.
-  
+  if (piece === null && currentPaintedCell === undefined) return; // There is nothing to deselect or select.
+
   if (piece === null && currentPaintedCell !== undefined) {
 
     deSelectPiece();
@@ -82,7 +82,7 @@ function markPossibleOptions(clickedCell) {
     currentPaintedCell = undefined;
     return;
   }
-  if (piece !== currentPaintedCell && currentPaintedCell !== undefined){
+  if (piece !== currentPaintedCell && currentPaintedCell !== undefined) {
     deSelectPiece();
     currentPaintedCell.classList.remove("selectedCell");
     currentPaintedCell = undefined;
@@ -122,7 +122,8 @@ function piecePlacer(row, column, node, board) {
   node.style.backgroundRepeat = "no-repeat";
   node.style.backgroundPosition = "center";
   node.style.backgroundImage = board[row][column].getImage();
-  node.style.cursor = "pointer";
+  if (board[row][column].getImage() !== "none")
+    node.style.cursor = "pointer";
 }
 
 function buildBoard() {

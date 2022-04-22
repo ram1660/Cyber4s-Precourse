@@ -45,7 +45,7 @@ class Pawn extends Piece {
 
         this.addNearMovableCell(board, possibleMoves);
         if (this.row - 1 > -1 && this.row + 1 < BOARD_LENGTH) {
-            if (this.column + 1 > -1 && board[this.row + 1 * this.direction][this.column - 1].getColor() === this.enemyColor)
+            if (this.column - 1 > -1 && board[this.row + 1 * this.direction][this.column - 1].getColor() === this.enemyColor)
                 possibleEats.push([this.row + 1 * this.direction, this.column - 1]);
             if (this.column + 1 < BOARD_LENGTH && board[this.row + 1 * this.direction][this.column + 1].getColor() === this.enemyColor)
                 possibleEats.push([this.row + 1 * this.direction, this.column + 1]);
@@ -235,80 +235,20 @@ class Knight extends Piece {
         const possibleEats = [];
         const possibleMoves = [];
         for (const pos of this.possibleDirections) {
-            for (const side of pos.sides) {
-                if (this.row + pos["row"] < BOARD_LENGTH && this.row + pos["row"] > -1) {
+            let currentRowPosition = pos["row"];
+            if (this.row + currentRowPosition < BOARD_LENGTH && this.row + currentRowPosition > -1) {
+                for (const side of pos.sides) {
                     if (this.column + side < BOARD_LENGTH && this.column + side > -1) {
-                        if (board[this.row + pos["row"]][this.column + side].getColor() === this.enemyColor)
-                            possibleEats.push([this.row + pos["row"], this.column + side]);
-                        else if (board[this.row + pos["row"]][this.column + side].getName() === "Empty")
-                            possibleMoves.push([this.row + pos["row"], this.column + side]);
+                        if (board[this.row + currentRowPosition][this.column + side].getColor() === this.enemyColor)
+                            possibleEats.push([this.row + currentRowPosition, this.column + side]);
+                        else if (board[this.row + currentRowPosition][this.column + side].getName() === "Empty")
+                            possibleMoves.push([this.row + currentRowPosition, this.column + side]);
                     }
                 }
             }
         }
         return [possibleMoves, possibleEats];
     }
-    //     showPossibleMoves(board) {
-    //         const possibleMoves = [];
-    //         const possibleEats = [];
-    //         if (this.row + 2 < BOARD_LENGTH) {
-    //             if (this.column + 1 < BOARD_LENGTH) {
-    //                 if (board[this.row + 2][this.column + 1].getColor() === this.enemyColor)
-    //                     possibleEats.push([this.row + 2, this.column + 1]);
-    //                 else if (board[this.row + 2][this.column + 1].getName() === "Empty")
-    //                     possibleMoves.push([this.row + 2, this.column + 1]);
-    //             }
-    //             if (this.column - 1 > -1) {
-    //                 if (board[this.row + 2][this.column - 1].getColor() === this.enemyColor)
-    //                     possibleEats.push([this.row + 2, this.column - 1]);
-    //                 else if (board[this.row + 2][this.column - 1].getName() === "Empty")
-    //                     possibleMoves.push([this.row + 2, this.column - 1]);
-    //             }
-    //         }
-    //         if (this.row - 2 > -1) {
-    //             if (this.column + 1 < BOARD_LENGTH) {
-    //                 if (board[this.row - 2][this.column + 1].getColor() === this.enemyColor)
-    //                     possibleEats.push([this.row - 2, this.column + 1]);
-    //                 else if (board[this.row - 2][this.column + 1].getName() === "Empty")
-    //                     possibleMoves.push([this.row - 2, this.column + 1]);
-    //             }
-    //             if (this.column - 1 > -1) {
-    //                 if (board[this.row - 2][this.column - 1].getColor() === this.enemyColor)
-    //                     possibleEats.push([this.row - 2, this.column - 1]);
-    //                 else if (board[this.row - 2][this.column - 1].getName() === "Empty")
-    //                     possibleMoves.push([this.row - 2, this.column - 1]);
-    //             }
-    //         }
-    //         if (this.column + 2 < BOARD_LENGTH) {
-    //             if (this.row + 1 < BOARD_LENGTH) {
-    //                 if (board[this.row + 1][this.column + 2].getColor() === this.enemyColor)
-    //                     possibleEats.push([this.row + 1, this.column + 2]);
-    //                 else if (board[this.row + 1][this.column + 2].getName() === "Empty")
-    //                     possibleMoves.push([this.row + 1, this.column + 2]);
-    //             }
-    //             if (this.row - 1 > -1) {
-    //                 if (board[this.row - 1][this.column + 2].getColor() === this.enemyColor)
-    //                     possibleEats.push([this.row - 1, this.column + 2]);
-    //                 else if (board[this.row - 1][this.column + 2].getName() === "Empty")
-    //                     possibleMoves.push([this.row - 1, this.column + 2]);
-    //             }
-    //         }
-    //         if (this.column - 2 > -1) {
-    //             if (this.row + 1 < BOARD_LENGTH) {
-    //                 if (board[this.row + 1][this.column - 2].getColor() === this.enemyColor)
-    //                     possibleEats.push([this.row + 1, this.column - 2]);
-    //                 else if (board[this.row + 1][this.column - 2].getName() === "Empty")
-    //                     possibleMoves.push([this.row + 1, this.column - 2]);
-    //             }
-    //             if (this.row - 1 > -1) {
-    //                 if (board[this.row - 1][this.column - 2].getColor() === this.enemyColor)
-    //                     possibleEats.push([this.row - 1, this.column - 2]);
-    //                 else if (board[this.row - 1][this.column - 2].getName() === "Empty")
-    //                     possibleMoves.push([this.row - 1, this.column - 2]);
-    //             }
-    //         }
-    //         return [possibleMoves, possibleEats];
-    //     }
 }
 class King extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
