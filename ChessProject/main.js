@@ -33,27 +33,35 @@ function setupGui() {
  * @returns None
  */
 function cellInteraction(e) {
-  const cell = e.target;
+  // if(e.target === "TR") return;
+  const cell = e.target.tagName === "TD" ? e.target : e.target.parentElement;
   if (!isSecondClick)
     markPossibleOptions(cell);
   else
     movePiece(cell);
 
 }
+
+/**
+ * Performs the moving within the DOM and inside the pieces array.
+ * @param {EventTarget} clickedCell The cell that was clicked
+ */
 function movePiece(clickedCell) {
   const row = clickedCell.parentElement.rowIndex, column = clickedCell.cellIndex;
   const board = document.getElementsByTagName("table")[0];
   const targetCell = board.rows[row].cells[column];
   if (targetCell.classList.contains("possibleEat") || targetCell.classList.contains("possibleMove")) {
-    targetCell.style.backgroundImage = currentPaintedCell.style.backgroundImage;
-    deSelectPiece();
+    if(targetCell.classList.contains("possibleEat")){
+      targetCell.firstChild.remove();
+    }
+    targetCell.appendChild(currentPaintedCell.firstChild);
     objBoard.movePiece([currentPaintedCell.parentElement.rowIndex, currentPaintedCell.cellIndex], [row, column]);
     currentPaintedCell.classList.remove("selectedCell");
-    currentPaintedCell.style.backgroundImage = "none";
   } else {
-    deSelectPiece();
     currentPaintedCell.classList.remove("selectedCell");
   }
+  currentPaintedCell.style.cursor = "default";
+  deSelectPiece();
 
   currentPaintedCell = undefined;
   isSecondClick = false;
@@ -119,11 +127,16 @@ function markPossibleOptions(clickedCell) {
  */
 function piecePlacer(row, column, node, board) {
   // Applying style to all tds.
-  node.style.backgroundRepeat = "no-repeat";
-  node.style.backgroundPosition = "center";
-  node.style.backgroundImage = board[row][column].getImage();
-  if (board[row][column].getImage() !== "none")
-    node.style.cursor = "pointer";
+  const piecePicture = document.createElement("img");
+  piecePicture.diplay = "block";
+  if (board[row][column].getImage() !== "none") {
+    piecePicture.src = board[row][column].getImage();
+    piecePicture.style.backgroundRepeat = "no-repeat";
+    piecePicture.style.backgroundPosition = "center";
+    // node.style.backgroundImage = board[row][column].getImage();
+    piecePicture.style.cursor = "pointer";
+    node.appendChild(piecePicture);
+  }
 }
 
 function buildBoard() {
