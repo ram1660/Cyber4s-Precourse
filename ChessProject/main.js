@@ -100,7 +100,7 @@ function markPossibleOptions(clickedCell) {
 
   currentPaintedCell = clickedCell;
   currentPaintedCell.classList.add("selectedCell");
-  const [possibleMoves, possibleEats] = piece.showPossibleMoves(objBoard.getBoard());
+  const [possibleMoves, possibleEats] = piece.showPossibleMoves(objBoard);
   const board = document.getElementsByTagName("table")[0];
   for (const move of possibleMoves) {
     const [row, col] = move; // Using destructuring

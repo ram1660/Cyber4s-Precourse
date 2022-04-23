@@ -27,7 +27,7 @@ class Piece {
         this.row = row;
         this.column = column;
     }
-    getEnemyColor(){
+    getEnemyColor() {
         return this.enemyColor;
     }
 }
@@ -38,7 +38,8 @@ class Pawn extends Piece {
         this.isFirstMove = true;
         this.direction = this.color === "w" ? -1 : 1; // Controls which direction the pawn should move.
     }
-    showPossibleMoves(board) {
+    showPossibleMoves(objBoard) {
+        const board = objBoard.getBoard();
         const possibleMoves = [];
         const possibleEats = [];
         // TODO: Add bounderies check
@@ -75,7 +76,8 @@ class Rook extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
     }
-    showPossibleMoves(board) {
+    showPossibleMoves(objBoard) {
+        const board = objBoard.getBoard();
         const possibleMoves = [];
         const possibleEats = [];
         for (let i = this.row + 1; i < BOARD_LENGTH; i++) {
@@ -121,15 +123,16 @@ class Queen extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
     }
-    showPossibleMoves(board) {
+    showPossibleMoves(objBoard) {
         const possibleMoves = [];
         const possibleEats = [];
-        this.possibleDiagonalsMoves(board, possibleMoves, possibleEats);
-        this.possibleStraightMoves(board, possibleMoves, possibleEats);
+        this.possibleDiagonalsMoves(objBoard, possibleMoves, possibleEats);
+        this.possibleStraightMoves(objBoard, possibleMoves, possibleEats);
         return [possibleMoves, possibleEats];
     }
     // Inspired from the bishop logic
-    possibleDiagonalsMoves(board, possibleMoves, possibleEats) {
+    possibleDiagonalsMoves(objBoard, possibleMoves, possibleEats) {
+        const board = objBoard.getBoard();
         let i = this.row - 1, j = this.column - 1;
         while (i > -1 && j > -1) { // Top left
             if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
@@ -183,7 +186,8 @@ class Queen extends Piece {
         }
     }
     // Inspired from the rook logic
-    possibleStraightMoves(board, possibleMoves, possibleEats) {
+    possibleStraightMoves(objBoard, possibleMoves, possibleEats) {
+        const board = objBoard.getBoard();
         for (let i = this.row + 1; i < BOARD_LENGTH; i++) {
             if (board[i][this.column].getColor() !== this.enemyColor && board[i][this.column].getColor() !== "None")
                 break;
@@ -234,7 +238,8 @@ class Knight extends Piece {
         ]
     }
 
-    showPossibleMoves(board) {
+    showPossibleMoves(objBoard) {
+        const board = objBoard.getBoard();
         const possibleEats = [];
         const possibleMoves = [];
         for (const pos of this.possibleDirections) {
@@ -259,7 +264,38 @@ class King extends Piece {
 
     }
 
-    showPossibleMoves(board) {
+    /**
+     * 
+     * @param {BoardData} objBoard 
+     * @param {Array} kingPossibleMoves 
+     * @param {Array} kingPossibleEats 
+     */
+    checkControlledSquares(objBoard, kingPossibleMoves, kingPossibleEats) {
+        const enemyPieces = objBoard.getPieces(this.enemyColor);
+        let i = kingPossibleMoves.length;
+        while (i--) {
+            let move = kingPossibleMoves[i];
+            let tempObjBoard = new BoardData(objBoard.getBoard());
+            let tempBoard = tempObjBoard.getBoard();
+            let row = move[0], column = move[1];
+            tempBoard[row][column] = tempBoard[this.row][this.column];
+            tempBoard[this.row][this.column] = new Empty(this.row, this.column);
+            tempObjBoard.setBoard(tempBoard);
+            for (const enemyPiece of enemyPieces) {
+                const [possibleMoves, possibleEats] = enemyPiece.showPossibleMoves(tempObjBoard);
+                for(const eatPostion of possibleEats){
+                    if (tempBoard[eatPostion[0]][eatPostion[1]] === tempBoard[row][column]){
+                        let remove = kingPossibleMoves.findIndex(element => element[0] === row && element[1] === column);
+                        kingPossibleMoves.splice(remove, 1);
+                    }
+                }
+            }
+            tempBoard[this.row][this.column] = tempBoard[row][column];
+            tempBoard[row][column] = new Empty(row, column);
+        }
+    }
+    showPossibleMoves(objBoard) {
+        const board = objBoard.getBoard();
         const possibleEats = [];
         const possibleMoves = [];
         // Can be spreaded with functions for each side.
@@ -311,6 +347,7 @@ class King extends Piece {
             else if (board[this.row + 1][this.column].getName() === "Empty")
                 possibleMoves.push([this.row + 1, this.column]);
         }
+        this.checkControlledSquares(objBoard, possibleMoves, possibleEats);
         return [possibleMoves, possibleEats];
     }
 }
@@ -319,7 +356,8 @@ class Bishop extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
     }
-    showPossibleMoves(board) {
+    showPossibleMoves(objBoard) {
+        const board = objBoard.getBoard();
         const possibleEats = [];
         const possibleMoves = [];
         let i = this.row - 1, j = this.column - 1;

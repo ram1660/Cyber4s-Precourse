@@ -2,10 +2,11 @@
  * 
  */
 class BoardData {
-    constructor() {
-        this.board = [];
+    constructor(preMadeBoard) {
+        this.board = preMadeBoard === undefined ? [] : preMadeBoard;
         this.currentSelectedPiece = null;
-        this.setupBoardPieces();
+        if (this.board.length === 0)
+            this.setupBoardPieces();
     }
     setupBoardPieces() {
         let color;
@@ -50,13 +51,30 @@ class BoardData {
     getBoard() {
         return this.board;
     }
+    setBoard(board) {
+        this.board = board;
+    }
+    /**
+     * 
+     * @param {String} color Player color
+     * @returns {Array<Piece>} Array of corresponding color
+     */
+    getPieces(color) {
+        const pieces = [];
+        if (color !== "w" && color !== "b") return pieces;
+        for (const row of this.board)
+            for (const piece of row)
+                if (piece.getColor() === color && !(piece instanceof King))
+                    pieces.push(piece);
+        return pieces;
+    }
 
-    movePiece(src, target){
-        if(src.length !== 2 || target.length !== 2){
+    movePiece(src, target) {
+        if (src.length !== 2 || target.length !== 2) {
             console.log("something went wrong");
             return;
         }
-        const [srcRow,srcColumn] = src;
+        const [srcRow, srcColumn] = src;
         const [targetRow, targetColumn] = target;
         this.board[srcRow][srcColumn].setPosition(targetRow, targetColumn);
         this.board[targetRow][targetColumn] = this.board[srcRow][srcColumn];
