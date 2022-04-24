@@ -48,6 +48,10 @@ class BoardData {
         return this.board[row][column];
     }
 
+    getSpecificPieces(name){
+        return this.board.filter(piece => piece.getName() === name);
+    }
+
     getBoard() {
         return this.board;
     }

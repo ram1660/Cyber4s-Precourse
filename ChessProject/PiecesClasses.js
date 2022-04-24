@@ -11,9 +11,6 @@ class Piece {
     getImage() {
         return this.pieceImage;
     }
-    getPieceColor() {
-        return this.color;
-    }
     getPostion() {
         return [this.row, this.column];
     }
@@ -76,9 +73,6 @@ class Rook extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
         this.possibleDirections = [1, -1];
-    }
-    getRelativeMoves(direction) {
-
     }
     showPossibleMoves(objBoard) {
         const board = objBoard.getBoard();
@@ -206,23 +200,25 @@ class Knight extends Piece {
 class King extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
-        this.possibleDirections = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]
+        this.possibleDirections = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+        this.isThreaten = false;
     }
 
     /**
-     * 
+     * This positions reduces the positions the king can go for a specific position array.
      * @param {BoardData} objBoard 
-     * @param {Array} kingPossibleMoves 
+     * @param {Array} positions 
      * @param {Array} kingPossibleEats 
      */
-    checkControlledSquares(objBoard, kingPossibleMoves, kingPossibleEats) {
+    checkControlledSquares(objBoard, positions) {
         const enemyPieces = objBoard.getPieces(this.enemyColor);
-        let i = kingPossibleMoves.length;
+        let i = positions.length;
         while (i--) {
-            let move = kingPossibleMoves[i];
+            let move = positions[i];
             let tempObjBoard = new BoardData(objBoard.getBoard());
             let tempBoard = tempObjBoard.getBoard();
             let row = move[0], column = move[1];
+            let tempPiece = tempBoard[row][column];
             tempBoard[row][column] = tempBoard[this.row][this.column];
             tempBoard[this.row][this.column] = new Empty(this.row, this.column);
             tempObjBoard.setBoard(tempBoard);
@@ -230,16 +226,17 @@ class King extends Piece {
                 const [possibleMoves, possibleEats] = enemyPiece.showPossibleMoves(tempObjBoard);
                 for (const eatPostion of possibleEats) {
                     if (tempBoard[eatPostion[0]][eatPostion[1]] === tempBoard[row][column]) {
-                        let remove = kingPossibleMoves.findIndex(element => element[0] === row && element[1] === column);
+                        let remove = positions.findIndex(element => element[0] === row && element[1] === column);
                         if (remove !== -1)
-                            kingPossibleMoves.splice(remove, 1);
+                            positions.splice(remove, 1);
                     }
                 }
             }
             tempBoard[this.row][this.column] = tempBoard[row][column];
-            tempBoard[row][column] = new Empty(row, column);
+            tempBoard[row][column] = tempPiece;
         }
     }
+
     showPossibleMoves(objBoard) {
         const board = objBoard.getBoard();
         const possibleEats = [];
@@ -256,7 +253,8 @@ class King extends Piece {
                 }
             }
         }
-        this.checkControlledSquares(objBoard, possibleMoves, possibleEats);
+        this.checkControlledSquares(objBoard, possibleMoves);
+        this.checkControlledSquares(objBoard, possibleEats);
         return [possibleMoves, possibleEats];
     }
 }
