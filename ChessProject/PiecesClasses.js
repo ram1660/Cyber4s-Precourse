@@ -75,46 +75,38 @@ class Pawn extends Piece {
 class Rook extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
+        this.possibleDirections = [1, -1];
+    }
+    getRelativeMoves(direction) {
+
     }
     showPossibleMoves(objBoard) {
         const board = objBoard.getBoard();
         const possibleMoves = [];
         const possibleEats = [];
-        for (let i = this.row + 1; i < BOARD_LENGTH; i++) {
-            if (board[i][this.column].getColor() !== this.enemyColor && board[i][this.column].getColor() !== "None")
-                break;
-            if (board[i][this.column].getColor() === this.enemyColor) {
-                possibleEats.push([i, this.column]);
-                break;
-            } else if (board[i][this.column].getName() === "Empty")
-                possibleMoves.push([i, this.column]);
-        }
-        for (let i = this.row - 1; i > -1; i--) {
-            if (board[i][this.column].getColor() !== this.enemyColor && board[i][this.column].getColor() !== "None")
-                break;
-            if (board[i][this.column].getColor() === this.enemyColor) {
-                possibleEats.push([i, this.column]);
-                break;
-            } else if (board[i][this.column].getName() === "Empty")
-                possibleMoves.push([i, this.column]);
-        }
-        for (let i = this.column + 1; i < BOARD_LENGTH; i++) {
-            if (board[this.row][i].getColor() !== this.enemyColor && board[this.row][i].getColor() !== "None")
-                break;
-            if (board[this.row][i].getColor() === this.enemyColor) {
-                possibleEats.push([this.row, i]);
-                break;
-            } else if (board[this.row][i].getName() === "Empty")
-                possibleMoves.push([this.row, i]);
-        }
-        for (let i = this.column - 1; i > -1; i--) {
-            if (board[this.row][i].getColor() !== this.enemyColor && board[this.row][i].getColor() !== "None")
-                break;
-            if (board[this.row][i].getColor() === this.enemyColor) {
-                possibleEats.push([this.row, i]);
-                break;
-            } else if (board[this.row][i].getName() === "Empty")
-                possibleMoves.push([this.row, i]);
+        for (const direction of this.possibleDirections) {
+            let row = this.row + direction;
+            let column = this.column + direction;
+            while (row < BOARD_LENGTH && row > -1) {
+                if (board[row][this.column].getColor() === this.color)
+                    break;
+                if (board[row][this.column].getColor() === this.enemyColor) {
+                    possibleEats.push([row, this.column]);
+                    break;
+                } else if (board[row][this.column].getName() === "Empty")
+                    possibleMoves.push([row, this.column]);
+                row += direction;
+            }
+            while (column > -1 && column < BOARD_LENGTH) {
+                if (board[this.row][column].getColor() === this.color)
+                    break;
+                if (board[this.row][column].getColor() === this.enemyColor) {
+                    possibleEats.push([this.row, column]);
+                    break;
+                } else if (board[this.row][column].getName() === "Empty")
+                    possibleMoves.push([this.row, column]);
+                column += direction;
+            }
         }
         return [possibleMoves, possibleEats];
     }
@@ -122,6 +114,8 @@ class Rook extends Piece {
 class Queen extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
+        this.possibleStraightDirections = [1, -1];
+        this.possibleDiagonalsDirections = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
     }
     showPossibleMoves(objBoard) {
         const possibleMoves = [];
@@ -133,96 +127,47 @@ class Queen extends Piece {
     // Inspired from the bishop logic
     possibleDiagonalsMoves(objBoard, possibleMoves, possibleEats) {
         const board = objBoard.getBoard();
-        let i = this.row - 1, j = this.column - 1;
-        while (i > -1 && j > -1) { // Top left
-            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
-                break;
-            if (board[i][j].getColor() === this.enemyColor) {
-                possibleEats.push([i, j]);
-                break;
-            } else if (board[i][j].getName() === "Empty")
-                possibleMoves.push([i, j]);
-            i--;
-            j--;
-        }
-        i = this.row - 1;
-        j = this.column + 1;
-        while (i > -1 && j < BOARD_LENGTH) { // Top right
-            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
-                break;
-            if (board[i][j].getColor() === this.enemyColor) {
-                possibleEats.push([i, j]);
-                break;
-            } else if (board[i][j].getName() === "Empty")
-                possibleMoves.push([i, j]);
-            i--;
-            j++;
-        }
-        i = this.row + 1;
-        j = this.column + 1;
-        while (i < BOARD_LENGTH && j < BOARD_LENGTH) { // Bottom right
-            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
-                break;
-            if (board[i][j].getColor() === this.enemyColor) {
-                possibleEats.push([i, j]);
-                break;
-            } else if (board[i][j].getName() === "Empty")
-                possibleMoves.push([i, j]);
-            i++;
-            j++;
-        }
-        i = this.row + 1;
-        j = this.column - 1;
-        while (i < BOARD_LENGTH && j > -1) { // Bottom left
-            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
-                break;
-            if (board[i][j].getColor() === this.enemyColor) {
-                possibleEats.push([i, j]);
-                break;
-            } else if (board[i][j].getName() === "Empty")
-                possibleMoves.push([i, j]);
-            i++;
-            j--;
+        for (const direction of this.possibleDiagonalsDirections) {
+            let row = this.row + direction[0], column = this.column + direction[1];
+            while (row > -1 && row < BOARD_LENGTH && column > -1 && column < BOARD_LENGTH) {
+                if (board[row][column].getColor() === this.color)
+                    break;
+                if (board[row][column].getColor() === this.enemyColor) {
+                    possibleEats.push([row, column]);
+                    break;
+                } else if (board[row][column].getName() === "Empty")
+                    possibleMoves.push([row, column]);
+                row += direction[0];
+                column += direction[1];
+            }
         }
     }
     // Inspired from the rook logic
     possibleStraightMoves(objBoard, possibleMoves, possibleEats) {
         const board = objBoard.getBoard();
-        for (let i = this.row + 1; i < BOARD_LENGTH; i++) {
-            if (board[i][this.column].getColor() !== this.enemyColor && board[i][this.column].getColor() !== "None")
-                break;
-            if (board[i][this.column].getColor() === this.enemyColor) {
-                possibleEats.push([i, this.column]);
-                break;
-            } else if (board[i][this.column].getName() === "Empty")
-                possibleMoves.push([i, this.column]);
-        }
-        for (let i = this.row - 1; i > -1; i--) {
-            if (board[i][this.column].getColor() !== this.enemyColor && board[i][this.column].getColor() !== "None")
-                break;
-            if (board[i][this.column].getColor() === this.enemyColor) {
-                possibleEats.push([i, this.column]);
-                break;
-            } else if (board[i][this.column].getName() === "Empty")
-                possibleMoves.push([i, this.column]);
-        }
-        for (let i = this.column + 1; i < BOARD_LENGTH; i++) {
-            if (board[this.row][i].getColor() !== this.enemyColor && board[this.row][i].getColor() !== "None")
-                break;
-            if (board[this.row][i].getColor() === this.enemyColor) {
-                possibleEats.push([this.row, i]);
-                break;
-            } else if (board[this.row][i].getName() === "Empty")
-                possibleMoves.push([this.row, i]);
-        }
-        for (let i = this.column - 1; i > -1; i--) {
-            if (board[this.row][i].getColor() !== this.enemyColor && board[this.row][i].getColor() !== "None")
-                break;
-            if (board[this.row][i].getColor() === this.enemyColor) {
-                possibleEats.push([this.row, i]);
-                break;
-            } else if (board[this.row][i].getName() === "Empty")
-                possibleMoves.push([this.row, i]);
+        for (const direction of this.possibleStraightDirections) {
+            let row = this.row + direction;
+            let column = this.column + direction;
+            while (row < BOARD_LENGTH && row > -1) {
+                if (board[row][this.column].getColor() === this.color)
+                    break;
+                if (board[row][this.column].getColor() === this.enemyColor) {
+                    possibleEats.push([row, this.column]);
+                    break;
+                } else if (board[row][this.column].getName() === "Empty")
+                    possibleMoves.push([row, this.column]);
+                row += direction;
+            }
+            while (column > -1 && column < BOARD_LENGTH) {
+                if (board[this.row][column].getColor() === this.color)
+                    break;
+                if (board[this.row][column].getColor() === this.enemyColor) {
+                    possibleEats.push([this.row, column]);
+                    break;
+                } else if (board[this.row][column].getName() === "Empty")
+                    possibleMoves.push([this.row, column]);
+                column += direction;
+            }
         }
     }
 }
@@ -261,7 +206,7 @@ class Knight extends Piece {
 class King extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
-
+        this.possibleDirections = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]
     }
 
     /**
@@ -283,10 +228,11 @@ class King extends Piece {
             tempObjBoard.setBoard(tempBoard);
             for (const enemyPiece of enemyPieces) {
                 const [possibleMoves, possibleEats] = enemyPiece.showPossibleMoves(tempObjBoard);
-                for(const eatPostion of possibleEats){
-                    if (tempBoard[eatPostion[0]][eatPostion[1]] === tempBoard[row][column]){
+                for (const eatPostion of possibleEats) {
+                    if (tempBoard[eatPostion[0]][eatPostion[1]] === tempBoard[row][column]) {
                         let remove = kingPossibleMoves.findIndex(element => element[0] === row && element[1] === column);
-                        kingPossibleMoves.splice(remove, 1);
+                        if (remove !== -1)
+                            kingPossibleMoves.splice(remove, 1);
                     }
                 }
             }
@@ -298,54 +244,17 @@ class King extends Piece {
         const board = objBoard.getBoard();
         const possibleEats = [];
         const possibleMoves = [];
-        // Can be spreaded with functions for each side.
-        if (this.row - 1 > -1) { // Checks the upper row. 
-            if (this.column - 1 > -1) {
-                if (board[this.row - 1][this.column - 1].getColor() === this.enemyColor)
-                    possibleEats.push([this.row - 1, this.column - 1]);
-                else if (board[this.row - 1][this.column - 1].getName() === "Empty")
-                    possibleMoves.push([this.row - 1, this.column - 1]);
+        for (const direction of this.possibleDirections) {
+            let row = this.row + direction[0];
+            let column = this.column + direction[1];
+            if (row < BOARD_LENGTH && row > -1) {
+                if (column < BOARD_LENGTH && column > -1) {
+                    if (board[row][column].getColor() === this.enemyColor)
+                        possibleEats.push([row, column]);
+                    else if (board[row][column].getName() === "Empty")
+                        possibleMoves.push([row, column]);
+                }
             }
-            if (this.column + 1 < BOARD_LENGTH) {
-                if (board[this.row - 1][this.column + 1].getColor() === this.enemyColor)
-                    possibleEats.push([this.row - 1, this.column + 1]);
-                else if (board[this.row - 1][this.column + 1].getName() === "Empty")
-                    possibleMoves.push([this.row - 1, this.column + 1]);
-            }
-            if (board[this.row - 1][this.column].getColor() === this.enemyColor)
-                possibleEats.push([this.row - 1, this.column]);
-            else if (board[this.row - 1][this.column].getName() === "Empty")
-                possibleMoves.push([this.row - 1, this.column]);
-        }
-        if (this.column - 1 > -1) { // Checks the left side
-            if (board[this.row][this.column - 1].getColor() === this.enemyColor)
-                possibleEats.push([this.row, this.column - 1]);
-            else if (board[this.row][this.column - 1].getName() === "Empty")
-                possibleMoves.push([this.row, this.column - 1]);
-        }
-        if (this.column + 1 < BOARD_LENGTH) { // Checks the right side
-            if (board[this.row][this.column + 1].getColor() === this.enemyColor)
-                possibleEats.push([this.row, this.column + 1]);
-            else if (board[this.row][this.column + 1].getName() === "Empty")
-                possibleMoves.push([this.row, this.column + 1]);
-        }
-        if (this.row + 1 < BOARD_LENGTH) { // Checks the bottom row. 
-            if (this.column - 1 > -1) {
-                if (board[this.row + 1][this.column - 1].getColor() === this.enemyColor)
-                    possibleEats.push([this.row + 1, this.column - 1]);
-                else if (board[this.row + 1][this.column - 1].getName() === "Empty")
-                    possibleMoves.push([this.row + 1, this.column - 1]);
-            }
-            if (this.column + 1 < BOARD_LENGTH) {
-                if (board[this.row + 1][this.column + 1].getColor() === this.enemyColor)
-                    possibleEats.push([this.row - 1, this.column + 1]);
-                else if (board[this.row + 1][this.column + 1].getName() === "Empty")
-                    possibleMoves.push([this.row + 1, this.column + 1]);
-            }
-            if (board[this.row + 1][this.column].getColor() === this.enemyColor)
-                possibleEats.push([this.row + 1, this.column]);
-            else if (board[this.row + 1][this.column].getName() === "Empty")
-                possibleMoves.push([this.row + 1, this.column]);
         }
         this.checkControlledSquares(objBoard, possibleMoves, possibleEats);
         return [possibleMoves, possibleEats];
@@ -355,61 +264,25 @@ class King extends Piece {
 class Bishop extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
+        this.possibleDirections = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
     }
     showPossibleMoves(objBoard) {
         const board = objBoard.getBoard();
         const possibleEats = [];
         const possibleMoves = [];
-        let i = this.row - 1, j = this.column - 1;
-        while (i > -1 && j > -1) { // Top left
-            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
-                break;
-            if (board[i][j].getColor() === this.enemyColor) {
-                possibleEats.push([i, j]);
-                break;
-            } else if (board[i][j].getName() === "Empty")
-                possibleMoves.push([i, j]);
-            i--;
-            j--;
-        }
-        i = this.row - 1;
-        j = this.column + 1;
-        while (i > -1 && j < BOARD_LENGTH) { // Top right
-            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
-                break;
-            if (board[i][j].getColor() === this.enemyColor) {
-                possibleEats.push([i, j]);
-                break;
-            } else if (board[i][j].getName() === "Empty")
-                possibleMoves.push([i, j]);
-            i--;
-            j++;
-        }
-        i = this.row + 1;
-        j = this.column + 1;
-        while (i < BOARD_LENGTH && j < BOARD_LENGTH) { // Bottom right
-            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
-                break;
-            if (board[i][j].getColor() === this.enemyColor) {
-                possibleEats.push([i, j]);
-                break;
-            } else if (board[i][j].getName() === "Empty")
-                possibleMoves.push([i, j]);
-            i++;
-            j++;
-        }
-        i = this.row + 1;
-        j = this.column - 1;
-        while (i < BOARD_LENGTH && j > -1) { // Bottom left
-            if (board[i][j].getColor() !== this.enemyColor && board[i][j].getColor() !== "None")
-                break;
-            if (board[i][j].getColor() === this.enemyColor) {
-                possibleEats.push([i, j]);
-                break;
-            } else if (board[i][j].getName() === "Empty")
-                possibleMoves.push([i, j]);
-            i++;
-            j--;
+        for (const direction of this.possibleDirections) {
+            let row = this.row + direction[0], column = this.column + direction[1];
+            while (row > -1 && row < BOARD_LENGTH && column > -1 && column < BOARD_LENGTH) {
+                if (board[row][column].getColor() === this.color)
+                    break;
+                if (board[row][column].getColor() === this.enemyColor) {
+                    possibleEats.push([row, column]);
+                    break;
+                } else if (board[row][column].getName() === "Empty")
+                    possibleMoves.push([row, column]);
+                row += direction[0];
+                column += direction[1];
+            }
         }
         return [possibleMoves, possibleEats];
     }
