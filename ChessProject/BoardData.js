@@ -2,7 +2,16 @@
  * 
  */
 class BoardData {
+    /**
+     * 
+     * @param {Array.<Array.<Piece>>} preMadeBoard  
+     */
     constructor(preMadeBoard) {
+        /**
+         * Holds the current board array of pieces.
+         * @type {Array.<Array.<Piece>>}
+         * @private
+         */
         this.board = preMadeBoard === undefined ? [] : preMadeBoard;
         this.currentSelectedPiece = null;
         if (this.board.length === 0)
@@ -48,8 +57,46 @@ class BoardData {
         return this.board[row][column];
     }
 
-    getSpecificPieces(name){
-        return this.board.filter(piece => piece.getName() === name);
+    getSpecificPieces(name, color) {
+        let pieces = [];
+        if (color !== "w" && color !== "b") return null;
+        for (let i = 0; i < this.board.length; i++) {
+            for (let j = 0; j < this.board[i].length; j++) {
+                if (this.board[i][j].getName() === name && this.board[i][j].getColor() === color)
+                    pieces.push(this.board[i][j]);
+            }
+        }
+        return pieces;
+    }
+
+    /**
+     * 
+     * @param {Piece} selectedPiece 
+     * @param {Array.<Number>} moveToMark 
+     * @returns Returns whether the piece is pinned or not
+     */
+    isPiecePinned(selectedPiece, moveToMark) {
+        const tempObjBoard = new BoardData(this.getBoard());
+        const tempBoard = { ...tempObjBoard.getBoard() };
+        const tempPieceHolder = this.getPiece(moveToMark[0], moveToMark[1]) === null ? new Empty(moveToMark[0], moveToMark[1]) : this.getPiece(moveToMark[0], moveToMark[1]);
+        tempBoard[moveToMark[0]][moveToMark[1]] = selectedPiece;
+        tempBoard[selectedPiece.getPosition()[0]][selectedPiece.getPosition()[1]] = new Empty(selectedPiece.getPosition()[0], selectedPiece.getPosition()[1]);
+        tempObjBoard.setBoard(tempBoard);
+        const kingPos = this.getSpecificPieces("King", selectedPiece.getColor())[0].getPosition();
+        const enemyPieces = this.getPieces(selectedPiece.getEnemyColor());
+        for (const piece of enemyPieces) {
+            const [possibleMoves, possibleEats] = piece.showPossibleMoves(tempObjBoard);
+            for (const possibleEat of possibleEats) {
+                if (possibleEat[0] === kingPos[0] && possibleEat[1] === kingPos[1]) {
+                    tempObjBoard.getBoard()[moveToMark[0]][moveToMark[1]] = tempPieceHolder;
+                    tempObjBoard.getBoard()[selectedPiece.getPosition()[0]][selectedPiece.getPosition()[1]] = selectedPiece;
+                    return true;
+                }
+            }
+        }
+        tempObjBoard.getBoard()[moveToMark[0]][moveToMark[1]] = tempPieceHolder;
+        tempObjBoard.getBoard()[selectedPiece.getPosition()[0]][selectedPiece.getPosition()[1]] = selectedPiece;
+        return false;
     }
 
     getBoard() {
@@ -61,7 +108,7 @@ class BoardData {
     /**
      * 
      * @param {String} color Player color
-     * @returns {Array<Piece>} Array of corresponding color
+     * @returns {Array<Piece>} Array of corresponding color pieces
      */
     getPieces(color) {
         const pieces = [];
@@ -74,7 +121,7 @@ class BoardData {
     }
 
     movePiece(src, target) {
-        if (src.length !== 2 || target.length !== 2) {
+        if (src.length > 2 || target.length > 2) {
             console.log("something went wrong");
             return;
         }

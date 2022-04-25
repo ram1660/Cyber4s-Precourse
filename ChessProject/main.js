@@ -104,6 +104,9 @@ function markPossibleOptions(clickedCell) {
   const board = document.getElementsByTagName("table")[0];
   for (const move of possibleMoves) {
     const [row, col] = move; // Using destructuring
+    if(objBoard.isPiecePinned(piece, move)){
+      continue;
+    }
     const movableCell = board.rows[row].cells[col];
     movableCell.classList.add("possibleMove");
   }

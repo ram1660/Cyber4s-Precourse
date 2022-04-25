@@ -11,7 +11,7 @@ class Piece {
     getImage() {
         return this.pieceImage;
     }
-    getPostion() {
+    getPosition() {
         return [this.row, this.column];
     }
     getName() {
@@ -26,6 +26,9 @@ class Piece {
     }
     getEnemyColor() {
         return this.enemyColor;
+    }
+    showPossibleMoves(objBoard){
+        throw new Error("Can't show move for an unknown piece");
     }
 }
 
