@@ -1,7 +1,7 @@
 const BOARD_LENGTH = 8;
 const WHITE_PLAYER = "w";
 const BLACK_PLAYER = "b";
-let turn = "w"; // w = White b = Black
+let turn = WHITE_PLAYER; // w = White b = Black
 const objBoard = new BoardData();
 let currentPaintedCell;
 let isSecondClick = false; // Controls between a select and a move click.
