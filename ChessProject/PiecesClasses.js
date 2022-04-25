@@ -206,30 +206,28 @@ class King extends Piece {
 
     /**
      * This positions reduces the positions the king can go for a specific position array.
-     * @param {BoardData} objBoard 
-     * @param {Array} positions 
-     * @param {Array} kingPossibleEats 
+     * @param {BoardData} objBoard The current picture of the board.
+     * @param {Array.<Number>} positions An array of possible moves or eats.
      */
     checkControlledSquares(objBoard, positions) {
         const enemyPieces = objBoard.getPieces(this.enemyColor);
-        let i = positions.length;
+        let i = positions.length, row, column;
+        let tempObjBoard, tempBoard, tempPiece;;
         while (i--) {
             let move = positions[i];
-            let tempObjBoard = new BoardData(objBoard.getBoard());
-            let tempBoard = tempObjBoard.getBoard();
-            let row = move[0], column = move[1];
-            let tempPiece = tempBoard[row][column];
+            tempObjBoard = new BoardData(objBoard.getBoard());
+            tempBoard = tempObjBoard.getBoard();
+            row = move[0];
+            column = move[1];
+            tempPiece = tempBoard[row][column];
             tempBoard[row][column] = tempBoard[this.row][this.column];
             tempBoard[this.row][this.column] = new Empty(this.row, this.column);
             tempObjBoard.setBoard(tempBoard);
             for (const enemyPiece of enemyPieces) {
-                const [possibleMoves, possibleEats] = enemyPiece.showPossibleMoves(tempObjBoard);
-                for (const eatPostion of possibleEats) {
-                    if (tempBoard[eatPostion[0]][eatPostion[1]] === tempBoard[row][column]) {
-                        let remove = positions.findIndex(element => element[0] === row && element[1] === column);
-                        if (remove !== -1)
-                            positions.splice(remove, 1);
-                    }
+                if (this.isKingCanBeEaten(tempObjBoard, enemyPiece, move) === true) {
+                    let remove = positions.findIndex(element => element[0] === row && element[1] === column);
+                    if (remove !== -1)
+                        positions.splice(remove, 1);
                 }
             }
             tempBoard[this.row][this.column] = tempBoard[row][column];
@@ -237,6 +235,15 @@ class King extends Piece {
         }
     }
 
+    isKingCanBeEaten(objBoard, enemyPiece, kingCurrentPossition) {
+        const [possibleMoves, possibleEats] = enemyPiece.showPossibleMoves(objBoard);
+        for (const eatPostion of possibleEats) {
+            if (objBoard.getBoard()[eatPostion[0]][eatPostion[1]] === objBoard.getBoard()[kingCurrentPossition[0]][kingCurrentPossition[1]]) {
+                return true;
+            }
+        }
+        return false;
+    }
     showPossibleMoves(objBoard) {
         const board = objBoard.getBoard();
         const possibleEats = [];

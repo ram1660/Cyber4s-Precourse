@@ -130,7 +130,6 @@ function piecePlacer(row, column, node, board) {
     piecePicture.src = board[row][column].getImage();
     piecePicture.style.backgroundRepeat = "no-repeat";
     piecePicture.style.backgroundPosition = "center";
-    // node.style.backgroundImage = board[row][column].getImage();
     piecePicture.style.cursor = "pointer";
     node.appendChild(piecePicture);
   }
