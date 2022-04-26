@@ -56,8 +56,12 @@ function movePiece(clickedCell) {
     }
     targetCell.appendChild(currentPaintedCell.firstChild);
     objBoard.movePiece([currentPaintedCell.parentElement.rowIndex, currentPaintedCell.cellIndex], [row, column]);
-    if (objBoard.isKingThreaten(objBoard.getPiece(row, column).getEnemyColor()))
-      alert("You are in check");
+    if (objBoard.isKingThreaten(objBoard.getPiece(row, column).getEnemyColor())) {
+      if (objBoard.isKingMated(objBoard.getPiece(row, column).getEnemyColor()))
+        alert(objBoard.getPiece(row, column).getEnemyColor() + " lost!");
+      else 
+        alert("You are in check");
+    }
     turn = objBoard.getPiece(row, column).getEnemyColor(); // Switching turn.
   }
   currentPaintedCell.classList.remove("selectedCell");

@@ -99,6 +99,71 @@ class BoardData {
         return false;
     }
 
+    isKingMated(color) {
+        const king = this.getSpecificPieces("King", color)[0];
+        const defendingPieces = this.getPieces(king.getColor());
+        let tempPiece;
+        let prevPiecePos; // This counter respossible to tell us if we tried with all the pieces to save the king.
+        for (const piece of defendingPieces) {// Looping through all the aly pieces
+            prevPiecePos = piece.getPosition();
+            const [possibleMoves, possibleEats] = piece.showPossibleMoves(this);
+            for (const possibleMove of possibleMoves) { // Looping all the possible moves for that aly piece
+                this.movePiece(piece.getPosition(), possibleMove);
+                // const enemyPieces = this.getPieces(king.getEnemyColor());
+                // for(const possibleEnemyEats of enemyPieces){
+                //     if(possibleEnemyEats[0] === king.getPosition()[0] && possibleEnemyEats[1] === king.getPosition()[1]){
+                //         unableToSaveCounter++; // T his aly piece isn't the right piece to save the king go to the next piece.
+                //         break;
+                //     }
+                // }
+                if (!this.isKingThreaten(color)) {
+                    this.movePiece(possibleMove, prevPiecePos);
+                    return false;
+                }
+                this.movePiece(possibleMove, prevPiecePos);
+            }
+            for (const possibleEat of possibleEats) {
+                tempPiece = this.getPiece(possibleEat[0], possibleEat[1]);
+                this.movePiece(piece.getPosition(), possibleEat);
+                // for (const possibleEnemyEats of this.getPieces(king.getEnemyColor())[1]) {
+                //     if (possibleEnemyEats[0] === king.getPosition()[0] && possibleEnemyEats[1] === king.getPosition()[1]) {
+                //         unableToSaveCounter++; // This aly piece isn't the right piece to save the king go to the next piece.
+                //         break;
+                //     }
+                // }
+                if (!this.isKingThreaten(color)){
+                    this.movePiece(possibleEat, prevPiecePos);
+                    this.board[possibleEat[0]][possibleEat[1]] = tempPiece;
+                    return false;
+                }
+                this.movePiece(possibleEat, prevPiecePos);
+                this.board[possibleEat[0]][possibleEat[1]] = tempPiece;
+            }
+        }
+        const [kingPossibleMoves, kingPossibleEats] = king.showPossibleMoves(this);
+        for (const kingPossibleMove of kingPossibleMoves) {
+            this.movePiece(king.getPosition(), kingPossibleMove);
+            if (!this.isKingThreaten(color)){
+                this.movePiece(kingPossibleMove, king.getPosition());
+                return false;
+            }
+            this.movePiece(kingPossibleMove, king.getPosition());
+        }
+        for (const kingPossibleEat of kingPossibleEats) {
+            tempPiece = this.getPiece(kingPossibleEat[0], kingPossibleEat[1]);
+            prevPiecePos = king.getPosition();
+            this.movePiece(king.getPosition(), kingPossibleEat);
+            if (!this.isKingThreaten(color)){
+                this.movePiece(kingPossibleEat, prevPiecePos);
+                this.board[kingPossibleEat[0]][kingPossibleEat[1]] = tempPiece;
+                return false;
+            }
+            this.movePiece(kingPossibleEat, prevPiecePos);
+            this.board[kingPossibleEat[0]][kingPossibleEat[1]] = tempPiece;
+        }
+        return true;
+        // return this.getPieces(king.getColor()).length * 2 === unableToSaveCounter ? true : false;
+    }
     isKingThreaten(color) {
         const king = this.getSpecificPieces("King", color)[0];
         const threateningPieces = this.getPieces(king.getEnemyColor());
