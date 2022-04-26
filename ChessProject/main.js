@@ -34,7 +34,6 @@ function setupGui() {
  * @returns None
  */
 function cellInteraction(e) {
-  // if(e.target === "TR") return;
   const cell = e.target.tagName === "TD" ? e.target : e.target.parentElement;
   if (!isSecondClick)
     markPossibleOptions(cell);
@@ -57,6 +56,8 @@ function movePiece(clickedCell) {
     }
     targetCell.appendChild(currentPaintedCell.firstChild);
     objBoard.movePiece([currentPaintedCell.parentElement.rowIndex, currentPaintedCell.cellIndex], [row, column]);
+    if (objBoard.isKingThreaten(objBoard.getPiece(row, column).getEnemyColor()))
+      alert("You are in check");
     turn = objBoard.getPiece(row, column).getEnemyColor(); // Switching turn.
   }
   currentPaintedCell.classList.remove("selectedCell");
@@ -103,14 +104,17 @@ function markPossibleOptions(clickedCell) {
   const [possibleMoves, possibleEats] = piece.showPossibleMoves(objBoard);
   const board = document.getElementsByTagName("table")[0];
   for (const move of possibleMoves) {
-    const [row, col] = move; // Using destructuring
-    if(objBoard.isPiecePinned(piece, move)){
+    if (objBoard.isPiecePinned(piece, move)) {
       continue;
     }
+    const [row, col] = move; // Using destructuring
     const movableCell = board.rows[row].cells[col];
     movableCell.classList.add("possibleMove");
   }
   for (const eatMove of possibleEats) {
+    if (objBoard.isPiecePinned(piece, eatMove)) {
+      continue;
+    }
     const [row, col] = eatMove; // Using destructuring
     const eatablePiece = board.rows[row].cells[col];
     eatablePiece.classList.add("possibleEat");

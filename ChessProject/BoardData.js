@@ -76,8 +76,8 @@ class BoardData {
      * @returns Returns whether the piece is pinned or not
      */
     isPiecePinned(selectedPiece, moveToMark) {
-        const tempObjBoard = new BoardData(this.getBoard());
-        const tempBoard = { ...tempObjBoard.getBoard() };
+        const tempObjBoard = this;
+        const tempBoard = tempObjBoard.getBoard();
         const tempPieceHolder = this.getPiece(moveToMark[0], moveToMark[1]) === null ? new Empty(moveToMark[0], moveToMark[1]) : this.getPiece(moveToMark[0], moveToMark[1]);
         tempBoard[moveToMark[0]][moveToMark[1]] = selectedPiece;
         tempBoard[selectedPiece.getPosition()[0]][selectedPiece.getPosition()[1]] = new Empty(selectedPiece.getPosition()[0], selectedPiece.getPosition()[1]);
@@ -96,6 +96,19 @@ class BoardData {
         }
         tempObjBoard.getBoard()[moveToMark[0]][moveToMark[1]] = tempPieceHolder;
         tempObjBoard.getBoard()[selectedPiece.getPosition()[0]][selectedPiece.getPosition()[1]] = selectedPiece;
+        return false;
+    }
+
+    isKingThreaten(color) {
+        const king = this.getSpecificPieces("King", color)[0];
+        const threateningPieces = this.getPieces(king.getEnemyColor());
+        for (const piece of threateningPieces) {
+            const [possibleMoves, possibleEats] = piece.showPossibleMoves(this);
+            for (const possibleEat of possibleEats) {
+                if (king.getPosition()[0] === possibleEat[0] && king.getPosition()[1] === possibleEat[1])
+                    return true;
+            }
+        }
         return false;
     }
 
@@ -119,7 +132,12 @@ class BoardData {
                     pieces.push(piece);
         return pieces;
     }
-
+    /**
+     * Moves a piece inside the pieces board array.
+     * @param {Array.<Number>} src An array with two cells of the current piece position
+     * @param {Array.<Number>} target An array with two cells of the target position to move to.
+     * 
+     */
     movePiece(src, target) {
         if (src.length > 2 || target.length > 2) {
             console.log("something went wrong");
