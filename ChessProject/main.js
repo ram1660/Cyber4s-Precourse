@@ -55,7 +55,7 @@ function movePiece(clickedCell) {
       targetCell.firstChild.remove();
     }
     targetCell.appendChild(currentPaintedCell.firstChild);
-    objBoard.movePiece([currentPaintedCell.parentElement.rowIndex, currentPaintedCell.cellIndex], [row, column]);
+    objBoard.movePiece([currentPaintedCell.parentElement.rowIndex, currentPaintedCell.cellIndex], [row, column], true);
     if (objBoard.isKingThreaten(objBoard.getPiece(row, column).getEnemyColor())) {
       if (objBoard.isKingMated(objBoard.getPiece(row, column).getEnemyColor()))
         alert(objBoard.getPiece(row, column).getEnemyColor() + " lost!");

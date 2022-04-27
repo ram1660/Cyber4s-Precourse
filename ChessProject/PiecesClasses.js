@@ -27,7 +27,7 @@ class Piece {
     getEnemyColor() {
         return this.enemyColor;
     }
-    showPossibleMoves(objBoard){
+    showPossibleMoves(objBoard) {
         throw new Error("Can't show move for an unknown piece");
     }
 }
@@ -65,10 +65,16 @@ class Pawn extends Piece {
         if (board[this.row + 1 * this.direction][this.column].getName() === "Empty")
             possibleMoves.push([this.row + 1 * this.direction, this.column]);
     }
-    setPosition(row, column) {
+    setPosition(row, column, isReal) {
         this.row = row;
         this.column = column;
-        this.isFirstMove = false;
+        if (isReal)
+            this.isFirstMove = false;
+    }
+    setFirstPosition(row, column) {
+        this.row = row;
+        this.column = column;
+
     }
 }
 
