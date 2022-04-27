@@ -1,8 +1,10 @@
 const BOARD_LENGTH = 8;
 const WHITE_PLAYER = "w";
 const BLACK_PLAYER = "b";
-let turn = WHITE_PLAYER; // w = White b = Black
 const objBoard = new BoardData();
+
+
+let turn = WHITE_PLAYER; // w = White b = Black
 let currentPaintedCell;
 let isSecondClick = false; // Controls between a select and a move click.
 
@@ -21,6 +23,15 @@ function setupGui() {
   boardContainer.appendChild(buildBoard()); // Builds the board.
   document.body.appendChild(boardContainer);
 
+  // Appends the winner box into the board container
+  const winnerBox = document.createElement("div");
+  elementVar = document.createElement("p");
+  elementVar.innerText = "{winner} won!";
+  elementVar.classList.add("winner-text");
+  winnerBox.classList.add("winner-box");
+  winnerBox.appendChild(elementVar);
+  boardContainer.appendChild(winnerBox);
+
   elementVar = document.createElement("div");
   elementVar.className = "player-name";
   elementVar.innerText = "Player 1";
@@ -31,7 +42,6 @@ function setupGui() {
 /**
  * Handles all board interactions.
  * @param {MouseEvent} e Object to the cell that got clicked
- * @returns None
  */
 function cellInteraction(e) {
   const cell = e.target.tagName === "TD" ? e.target : e.target.parentElement;
@@ -52,12 +62,18 @@ function movePiece(clickedCell) {
   if (targetCell.classList.contains("possibleEat") || targetCell.classList.contains("possibleMove")) {
     if (targetCell.classList.contains("possibleEat"))
       targetCell.firstChild.remove();
-      
+
     targetCell.appendChild(currentPaintedCell.firstChild);
     objBoard.movePiece([currentPaintedCell.parentElement.rowIndex, currentPaintedCell.cellIndex], [row, column], true);
     if (objBoard.isKingThreaten(objBoard.getPiece(row, column).getEnemyColor())) {
-      if (objBoard.isKingMated(objBoard.getPiece(row, column).getEnemyColor()))
-        alert(objBoard.getPiece(row, column).getEnemyColor() + " lost!");
+      if (objBoard.isKingMated(objBoard.getPiece(row, column).getEnemyColor())) {
+        let winnerBox = document.getElementsByClassName("winner-box")[0];
+        if (objBoard.getPiece(row, column).getColor() === "w")
+          winnerBox.firstChild.innerText = winnerBox.firstChild.innerText.replace("{winner}", "White");
+        else
+          winnerBox.firstChild.innerText = winnerBox.firstChild.innerText.replace("{winner}", "Black");
+        winnerBox.style.display = "block";
+      }
       else
         alert("You are in check");
     }
@@ -139,6 +155,7 @@ function piecePlacer(row, column, node, board) {
   // Applying style to all tds.
   const piecePicture = document.createElement("img");
   piecePicture.diplay = "block";
+  piecePicture.draggable = false;
   if (board[row][column].getImage() !== "none") {
     piecePicture.src = board[row][column].getImage();
     piecePicture.style.backgroundRepeat = "no-repeat";
