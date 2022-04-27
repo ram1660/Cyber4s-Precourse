@@ -128,17 +128,17 @@ class BoardData {
             }
         }
         const [kingPossibleMoves, kingPossibleEats] = king.showPossibleMoves(this);
+        prevPiecePos = king.getPosition();
         for (const kingPossibleMove of kingPossibleMoves) {
             this.movePiece(king.getPosition(), kingPossibleMove, false);
             if (!this.isKingThreaten(color)) {
-                this.movePiece(kingPossibleMove, king.getPosition(), false);
+                this.movePiece(kingPossibleMove, prevPiecePos, false);
                 return false;
             }
-            this.movePiece(kingPossibleMove, king.getPosition(), false);
+            this.movePiece(kingPossibleMove, prevPiecePos, false);
         }
         for (const kingPossibleEat of kingPossibleEats) {
             tempPiece = this.getPiece(kingPossibleEat[0], kingPossibleEat[1]);
-            prevPiecePos = king.getPosition();
             this.movePiece(king.getPosition(), kingPossibleEat, false);
             if (!this.isKingThreaten(color)) {
                 this.movePiece(kingPossibleEat, prevPiecePos, false);

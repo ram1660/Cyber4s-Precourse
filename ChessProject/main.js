@@ -24,20 +24,24 @@ function setupGui() {
   document.body.appendChild(boardContainer);
 
   // Appends the winner box into the board container
-  const winnerBox = document.createElement("div");
-  elementVar = document.createElement("p");
-  elementVar.innerText = "{winner} won!";
-  elementVar.classList.add("winner-text");
-  winnerBox.classList.add("winner-box");
-  winnerBox.appendChild(elementVar);
-  boardContainer.appendChild(winnerBox);
-
+  boardContainer.appendChild(createWinnerBox());
   elementVar = document.createElement("div");
   elementVar.className = "player-name";
   elementVar.innerText = "Player 1";
   boardContainer.appendChild(elementVar);
 }
 
+
+function createWinnerBox(){
+  const winnerBox = document.createElement("div");
+  let elementVar;
+  elementVar = document.createElement("p");
+  elementVar.innerText = "{winner} won!";
+  elementVar.classList.add("winner-text");
+  winnerBox.classList.add("winner-box");
+  winnerBox.appendChild(elementVar);
+  return winnerBox;
+}
 
 /**
  * Handles all board interactions.
