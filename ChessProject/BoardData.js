@@ -149,7 +149,6 @@ class BoardData {
             this.board[kingPossibleEat[0]][kingPossibleEat[1]] = tempPiece;
         }
         return true;
-        // return this.getPieces(king.getColor()).length * 2 === unableToSaveCounter ? true : false;
     }
     isKingThreaten(color) {
         const king = this.getSpecificPieces("King", color)[0];

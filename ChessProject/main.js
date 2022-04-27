@@ -39,7 +39,6 @@ function cellInteraction(e) {
     markPossibleOptions(cell);
   else
     movePiece(cell);
-
 }
 
 /**
@@ -51,15 +50,15 @@ function movePiece(clickedCell) {
   const board = document.getElementsByTagName("table")[0];
   const targetCell = board.rows[row].cells[column];
   if (targetCell.classList.contains("possibleEat") || targetCell.classList.contains("possibleMove")) {
-    if (targetCell.classList.contains("possibleEat")) {
+    if (targetCell.classList.contains("possibleEat"))
       targetCell.firstChild.remove();
-    }
+      
     targetCell.appendChild(currentPaintedCell.firstChild);
     objBoard.movePiece([currentPaintedCell.parentElement.rowIndex, currentPaintedCell.cellIndex], [row, column], true);
     if (objBoard.isKingThreaten(objBoard.getPiece(row, column).getEnemyColor())) {
       if (objBoard.isKingMated(objBoard.getPiece(row, column).getEnemyColor()))
         alert(objBoard.getPiece(row, column).getEnemyColor() + " lost!");
-      else 
+      else
         alert("You are in check");
     }
     turn = objBoard.getPiece(row, column).getEnemyColor(); // Switching turn.
@@ -89,7 +88,6 @@ function markPossibleOptions(clickedCell) {
   if (piece === null && currentPaintedCell === undefined) return; // There is nothing to deselect or select.
 
   if ((piece === null || piece !== currentPaintedCell) && currentPaintedCell !== undefined) {
-
     deSelectPiece();
     currentPaintedCell.classList.remove("selectedCell");
     currentPaintedCell = undefined;
@@ -122,6 +120,10 @@ function markPossibleOptions(clickedCell) {
     const [row, col] = eatMove; // Using destructuring
     const eatablePiece = board.rows[row].cells[col];
     eatablePiece.classList.add("possibleEat");
+  }
+  if (piece instanceof King) {
+    // if(!piece.hasMoved())
+    // const possibleCastles = piece.getPossibleCastles(objBoard);
   }
 }
 

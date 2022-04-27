@@ -82,6 +82,7 @@ class Rook extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
         this.possibleDirections = [1, -1];
+        this.hasMoved = false;
     }
     showPossibleMoves(objBoard) {
         const board = objBoard.getBoard();
@@ -112,6 +113,12 @@ class Rook extends Piece {
             }
         }
         return [possibleMoves, possibleEats];
+    }
+    setPosition(row, column, isReal) {
+        this.row = row;
+        this.column = column;
+        if (isReal)
+            this.hasMoved = true;
     }
 }
 class Queen extends Piece {
@@ -173,6 +180,9 @@ class Queen extends Piece {
             }
         }
     }
+    hasMoved() {
+        return this.hasMoved;
+    }
 }
 
 class Knight extends Piece {
@@ -211,6 +221,7 @@ class King extends Piece {
         super(row, column, name, pieceImage, color, additionalStyles);
         this.possibleDirections = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
         this.isThreaten = false;
+        this.hasMoved = false;
     }
 
     /**
@@ -272,6 +283,28 @@ class King extends Piece {
         this.checkControlledSquares(objBoard, possibleMoves);
         this.checkControlledSquares(objBoard, possibleEats);
         return [possibleMoves, possibleEats];
+    }
+    /**
+     * 
+     * @param {BoardData} board 
+     */
+    getPossibleCastles(board) {
+        const alyRooks = board.getSpecificPieces("Rook", this.color);
+        for (const rook of alyRooks) {
+            if (!rook.hasMoved()) continue;
+            // for (let column)
+        }
+    }
+
+    hasMoved() {
+        return this.hasMoved;
+    }
+
+    setPosition(row, column, isReal) {
+        this.row = row;
+        this.column = column;
+        if (isReal)
+            this.hasMoved = true;
     }
 }
 
