@@ -4,12 +4,15 @@ const BLACK_PLAYER = "b";
 const objBoard = new BoardData();
 
 
-let turn = WHITE_PLAYER; // w = White b = Black
+let turn = WHITE_PLAYER; 
 let currentPaintedCell;
 let isSecondClick = false; // Controls between a select and a move click.
 
 window.addEventListener("load", setupGui);
 
+/**
+ * Builds the HTML and building the board.
+ */
 function setupGui() {
   let elementVar;
   const boardContainer = document.createElement("div"); // Creating the main div container
@@ -31,7 +34,10 @@ function setupGui() {
   boardContainer.appendChild(elementVar);
 }
 
-
+/**
+ * Creates a winner box and returns it for use.
+ * @returns {HTMLDivElement}
+ */
 function createWinnerBox(){
   const winnerBox = document.createElement("div");
   let elementVar;
@@ -45,10 +51,10 @@ function createWinnerBox(){
 
 /**
  * Handles all board interactions.
- * @param {MouseEvent} e Object to the cell that got clicked
+ * @param {MouseEvent} e An object to the cell that got clicked
  */
 function cellInteraction(e) {
-  const cell = e.target.tagName === "TD" ? e.target : e.target.parentElement;
+  const cell = e.target.tagName === "TD" ? e.target : e.target.parentElement; // Should handle a weird bug with selecting td's
   if (!isSecondClick)
     markPossibleOptions(cell);
   else
@@ -90,7 +96,11 @@ function movePiece(clickedCell) {
   currentPaintedCell = undefined;
   isSecondClick = false;
 }
-function deSelectPiece() { // Can be improved using objects
+
+/**
+ * Deselect all selections.
+ */
+function deSelectPiece() {
   const board = document.getElementsByTagName("table")[0];
   for (let i = 0; i < BOARD_LENGTH; i++) {
     for (let j = 0; j < BOARD_LENGTH; j++) {
@@ -101,7 +111,11 @@ function deSelectPiece() { // Can be improved using objects
 
 }
 
-
+/**
+ * 
+ * @param {EventTarget} clickedCell 
+ * @returns 
+ */
 function markPossibleOptions(clickedCell) {
   const row = clickedCell.parentElement.rowIndex, column = clickedCell.cellIndex;
   const piece = objBoard.getPiece(row, column);
@@ -141,10 +155,11 @@ function markPossibleOptions(clickedCell) {
     const eatablePiece = board.rows[row].cells[col];
     eatablePiece.classList.add("possibleEat");
   }
-  if (piece instanceof King) {
-    // if(!piece.hasMoved())
-    // const possibleCastles = piece.getPossibleCastles(objBoard);
-  }
+  // TODO: For castling
+  // if (piece instanceof King) {
+  //   if(!piece.hasMoved())
+  //     const possibleCastles = piece.getPossibleCastles(objBoard);
+  // }
 }
 
 /**
@@ -153,6 +168,7 @@ function markPossibleOptions(clickedCell) {
  * @param {Number} row Which row the piece needs to be placed
  * @param {Number} column Which column the piece needs to be placed
  * @param {HTMLTableCellElement} node The HTML to apply the styles and image
+ * @param {Array.<Array.<Piece>>} board A reference to the pieces array
  * @returns 
  */
 function piecePlacer(row, column, node, board) {

@@ -1,3 +1,7 @@
+/**
+ * Represents a general class of a piece.
+ * Contains useful fields for identifying a piece
+ */
 class Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         this.name = name;
@@ -8,41 +12,80 @@ class Piece {
         this.color = color;
         this.enemyColor = this.color === "w" ? "b" : "w"; // This will tell us who is the enemy.
     }
+
+    /**
+     * Returns the path of an image associated piece.
+     * @returns {String}
+     */
     getImage() {
         return this.pieceImage;
     }
+
+    /**
+     * Returns the current position of a piece.
+     * @returns {Array.<Number>}
+     */
     getPosition() {
         return [this.row, this.column];
     }
+
+    /**
+     * Returns the name of a piece.
+     * @returns {String}
+     */
     getName() {
         return this.name;
     }
+
+    /**
+     * Return a shorthand name of the color "b" or "w".
+     * @returns {String}
+     */
     getColor() {
         return this.color;
     }
+
+    /**
+     * Sets a new row and column of a piece.
+     * @param {Number} row 
+     * @param {Number} column 
+     */
     setPosition(row, column) {
         this.row = row;
         this.column = column;
     }
+
+    /**
+     * Returns the shorthand enemy color. 
+     * @returns {String}
+     */
     getEnemyColor() {
         return this.enemyColor;
     }
+
+    /**
+     * A method classes which extends Piece needs to implement.
+     * @param {BoardData} objBoard 
+     */
     showPossibleMoves(objBoard) {
         throw new Error("Can't show move for an unknown piece");
     }
 }
 
+/**
+ * Represents a pawn. Contains pawn Logic.
+ */
 class Pawn extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
         this.isFirstMove = true;
         this.direction = this.color === "w" ? -1 : 1; // Controls which direction the pawn should move.
     }
+
     showPossibleMoves(objBoard) {
         const board = objBoard.getBoard();
         const possibleMoves = [];
         const possibleEats = [];
-        // TODO: Add bounderies check
         if (this.isFirstMove) // Is it the first move?
             if (board[this.row + 2 * this.direction][this.column].getName() === "Empty")
                 possibleMoves.push([this.row + 2 * this.direction, this.column]);
@@ -56,6 +99,7 @@ class Pawn extends Piece {
         }
         return [possibleMoves, possibleEats];
     }
+
     /**
      * Adds the one square move if possible.
      * @param {Piece[][]} board The current board
@@ -65,29 +109,35 @@ class Pawn extends Piece {
         if (board[this.row + 1 * this.direction][this.column].getName() === "Empty")
             possibleMoves.push([this.row + 1 * this.direction, this.column]);
     }
+
+    /**
+     * Sets the position of a piece.
+     * @param {Number} row Row target
+     * @param {Number} column Column target
+     * @param {Boolean} isReal Activating the first move
+     */
     setPosition(row, column, isReal) {
         this.row = row;
         this.column = column;
         if (isReal)
             this.isFirstMove = false;
     }
-    setFirstPosition(row, column) {
-        this.row = row;
-        this.column = column;
-
-    }
 }
 
+/**
+ * Represents a rook. Contains rook Logic.
+ */
 class Rook extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
         this.possibleDirections = [1, -1];
         this.hasMoved = false;
     }
+
     showPossibleMoves(objBoard) {
         const board = objBoard.getBoard();
-        const possibleMoves = [];
-        const possibleEats = [];
+        const possibleMoves = []; // [[1,5], [5,3]]
+        const possibleEats = []; // [[6,7]]
         for (const direction of this.possibleDirections) {
             let row = this.row + direction;
             let column = this.column + direction;
@@ -114,11 +164,17 @@ class Rook extends Piece {
         }
         return [possibleMoves, possibleEats];
     }
+
     setPosition(row, column, isReal) {
         this.row = row;
         this.column = column;
         if (isReal)
             this.hasMoved = true;
+    }
+
+    // TODO: For castling
+    hasMoved() {
+        return this.hasMoved;
     }
 }
 class Queen extends Piece {
@@ -127,6 +183,7 @@ class Queen extends Piece {
         this.possibleStraightDirections = [1, -1];
         this.possibleDiagonalsDirections = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
     }
+
     showPossibleMoves(objBoard) {
         const possibleMoves = [];
         const possibleEats = [];
@@ -134,6 +191,7 @@ class Queen extends Piece {
         this.possibleStraightMoves(objBoard, possibleMoves, possibleEats);
         return [possibleMoves, possibleEats];
     }
+
     // Inspired from the bishop logic
     possibleDiagonalsMoves(objBoard, possibleMoves, possibleEats) {
         const board = objBoard.getBoard();
@@ -152,6 +210,7 @@ class Queen extends Piece {
             }
         }
     }
+
     // Inspired from the rook logic
     possibleStraightMoves(objBoard, possibleMoves, possibleEats) {
         const board = objBoard.getBoard();
@@ -180,11 +239,11 @@ class Queen extends Piece {
             }
         }
     }
-    hasMoved() {
-        return this.hasMoved;
-    }
 }
 
+/**
+ * Represents a knight. Contains knight logic.
+ */
 class Knight extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
@@ -216,6 +275,10 @@ class Knight extends Piece {
         return [possibleMoves, possibleEats];
     }
 }
+
+/**
+ * Represents a king. Contains king logic.
+ */
 class King extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
@@ -255,6 +318,13 @@ class King extends Piece {
         }
     }
 
+    /**
+     * Performs a test if an enemy piece can eat the king.
+     * @param {BoardData} objBoard The pieces array we are performing the test
+     * @param {Piece} enemyPiece The threatening piece.
+     * @param {Array<Number>} kingCurrentPossition The position of the king
+     * @returns {Boolean} whether or not the king can be eaten
+     */
     isKingCanBeEaten(objBoard, enemyPiece, kingCurrentPossition) {
         const [possibleMoves, possibleEats] = enemyPiece.showPossibleMoves(objBoard);
         for (const eatPostion of possibleEats) {
@@ -264,6 +334,7 @@ class King extends Piece {
         }
         return false;
     }
+
     showPossibleMoves(objBoard) {
         const board = objBoard.getBoard();
         const possibleEats = [];
@@ -284,21 +355,23 @@ class King extends Piece {
         this.checkControlledSquares(objBoard, possibleEats);
         return [possibleMoves, possibleEats];
     }
-    /**
-     * 
-     * @param {BoardData} board 
-     */
-    getPossibleCastles(board) {
-        const alyRooks = board.getSpecificPieces("Rook", this.color);
-        for (const rook of alyRooks) {
-            if (!rook.hasMoved()) continue;
-            // for (let column)
-        }
-    }
 
-    hasMoved() {
-        return this.hasMoved;
-    }
+    // TODO: For
+    // /**
+    //  * 
+    //  * @param {BoardData} board 
+    //  */
+    // getPossibleCastles(board) {
+    //     const alyRooks = board.getSpecificPieces("Rook", this.color);
+    //     for (const rook of alyRooks) {
+    //         if (!rook.hasMoved()) continue;
+    //         // for (let column)
+    //     }
+    // }
+
+    // hasMoved() {
+    //     return this.hasMoved;
+    // }
 
     setPosition(row, column, isReal) {
         this.row = row;
@@ -308,11 +381,15 @@ class King extends Piece {
     }
 }
 
+/**
+ * Represents a bishop. Contains bishop logic.
+ */
 class Bishop extends Piece {
     constructor(row, column, name, pieceImage, color, additionalStyles) {
         super(row, column, name, pieceImage, color, additionalStyles);
         this.possibleDirections = [[1, 1], [1, -1], [-1, 1], [-1, -1]];
     }
+
     showPossibleMoves(objBoard) {
         const board = objBoard.getBoard();
         const possibleEats = [];
@@ -335,18 +412,36 @@ class Bishop extends Piece {
     }
 }
 
+/**
+ * Represents an empty.
+ */
 class Empty {
     constructor(row, column) {
         this.row = row;
         this.column = column;
         this.name = "Empty";
     }
+
+    /**
+     * Gets the name of an empty name
+     * @returns {String} Returns the string "Empty".
+     */
     getName() {
         return this.name;
     }
+
+    /**
+     * Returns "None" because empty has no color.
+     * @returns {String}
+     */
     getColor() {
         return "None";
     }
+
+    /**
+     * Returns "none" because emtpy has no image to display
+     * @returns {String}
+     */
     getImage() {
         return "none";
     }

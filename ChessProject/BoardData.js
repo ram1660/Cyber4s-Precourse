@@ -3,20 +3,23 @@
  */
 class BoardData {
     /**
-     * 
-     * @param {Array.<Array.<Piece>>} preMadeBoard  
+     * Construct a BoardData object and setup the board pieces
+     * @param {Array.<Array.<Piece>>} preMadeBoard  A premade of 2D pieces array
      */
     constructor(preMadeBoard) {
         /**
          * Holds the current board array of pieces.
          * @type {Array.<Array.<Piece>>}
-         * @private
          */
         this.board = preMadeBoard === undefined ? [] : preMadeBoard;
         this.currentSelectedPiece = null;
         if (this.board.length === 0)
             this.setupBoardPieces();
     }
+
+    /**
+     * Setup the 2D array of pieces in the right order.
+     */
     setupBoardPieces() {
         let color;
         for (let row = 0; row < BOARD_LENGTH; row++) {
@@ -46,17 +49,25 @@ class BoardData {
             }
         }
     }
+
     /**
-     * 
+     * Returns a piece object.
+     * If the position has no piece it will return null.
      * @param {Number} row The row of the piece
      * @param {Number} column The column of the piece
-     * @returns {Piece}
+     * @returns {Piece} A piece object or null if there is no piece.
      */
     getPiece(row, column) {
         if (this.board[row][column] instanceof Empty) return null;
         return this.board[row][column];
     }
 
+    /**
+     * 
+     * @param {String} name The name of the piece type
+     * @param {String} color The shorthand color name.
+     * @returns {Boolean} An array of all the matching piece of the selected color.
+     */
     getSpecificPieces(name, color) {
         let pieces = [];
         if (color !== "w" && color !== "b") return null;
@@ -70,9 +81,9 @@ class BoardData {
     }
 
     /**
-     * 
-     * @param {Piece} selectedPiece 
-     * @param {Array.<Number>} moveToMark 
+     * Checks if the piece can move without making the king be eaten.
+     * @param {Piece} selectedPiece A piece object we perform the test.
+     * @param {Array.<Number>} moveToMark The position the piece wants to move.
      * @returns Returns whether the piece is pinned or not
      */
     isPiecePinned(selectedPiece, moveToMark) {
@@ -99,6 +110,11 @@ class BoardData {
         return false;
     }
 
+    /**
+     * Checks if the king is mated.
+     * @param {String} color The shorthand color name.
+     * @returns {Boolean} A piece object or null if there is no piece.
+     */
     isKingMated(color) {
         const king = this.getSpecificPieces("King", color)[0];
         const defendingPieces = this.getPieces(king.getColor());
@@ -150,6 +166,12 @@ class BoardData {
         }
         return true;
     }
+
+    /**
+     * Checks if there is an enemy piece that can eat the king.
+     * @param {String} color The shorthand color name.
+     * @returns {Boolean} Whether or not the king can be eaten.
+     */
     isKingThreaten(color) {
         const king = this.getSpecificPieces("King", color)[0];
         const threateningPieces = this.getPieces(king.getEnemyColor());
@@ -163,16 +185,26 @@ class BoardData {
         return false;
     }
 
+    /**
+     * Gets the pieces array
+     * @returns {Array.<Array.<Piece>>} Returns the pieces array.
+     */
     getBoard() {
         return this.board;
     }
+
+    /**
+     * Set a new pieces board.
+     * @param {Array.<Array.<Piece>>} board A pieces 2D we want to set to.
+     */
     setBoard(board) {
         this.board = board;
     }
+
     /**
-     * 
-     * @param {String} color Player color
-     * @returns {Array<Piece>} Array of corresponding color pieces
+     * Gets all the pieces of a selected color.
+     * @param {String} color Player color.
+     * @returns {Array<Piece>} Array of corresponding color pieces.
      */
     getPieces(color) {
         const pieces = [];
@@ -183,11 +215,11 @@ class BoardData {
                     pieces.push(piece);
         return pieces;
     }
+
     /**
      * Moves a piece inside the pieces board array.
      * @param {Array.<Number>} src An array with two cells of the current piece position
      * @param {Array.<Number>} target An array with two cells of the target position to move to.
-     * 
      */
     movePiece(src, target, isReal) {
         if (src.length > 2 || target.length > 2) {
